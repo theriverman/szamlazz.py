@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Szamlazz.hu
+.notes
+test_template.xml
