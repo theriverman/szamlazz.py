@@ -16,16 +16,16 @@ if __name__ == '__main__':
     )
 
     demo_header = Header(
-        creating_date="2021-08-25",
-        payment_date="2021-08-25",
-        due_date="2021-08-30",
+        creating_date="2021-08-26",
+        payment_date="2021-08-26",
+        due_date="2021-08-31",
         payment_type="Átutalás",
         currency="HUF",
         invoice_language="hu",
         invoice_comment="No Comment",
         name_of_bank="MNB",
         exchange_rate=0.0,
-        order_number="ORDER-72",
+        order_number="ORDER-73",
         pro_forma_number_ref="",
         deposit_invoice=False,
         invoice_after_deposit_invoice=False,

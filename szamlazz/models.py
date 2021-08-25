@@ -1,11 +1,13 @@
 import base64
 import logging
 from pathlib import Path
-from typing import NamedTuple, Tuple
 from requests.models import Response
-from szamlazz.utils import PdfDataMissingError
+from typing import NamedTuple, Tuple
+from urllib.parse import unquote
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
+
+from szamlazz.utils import PdfDataMissingError
 
 
 __all__ = ["Header", "Merchant", "Buyer", "Item", "SzamlazzResponse"]  # "WayBill"
@@ -31,6 +33,8 @@ class Header(NamedTuple):
     number_of_corrected_invoice: str = ""  # <helyesbitettSzamlaszam></helyesbitettSzamlaszam>
     proforma_invoice: bool = False  # <dijbekero>false</dijbekero>
     invoice_prefix: str = ""  # <szamlaszamElotag></szamlaszamElotag>
+    invoice_number: str = ""  # <szamlaszam>E-TST-2011-1</szamlaszam>  // needed for reverse_invoice|storno only
+    invoice_template: str = ""  # <!-- Codomain: 'SzlaMost' | 'SzlaAlap' | 'SzlaNoEnv' | 'Szla8cm' | 'SzlaTomb' | 'SzlaFuvarlevelesAlap' -->
 
 
 class Merchant(NamedTuple):
@@ -51,6 +55,7 @@ class Buyer(NamedTuple):
     email: str = ""  # <email>buyer@example.com</email>
     send_email: bool = False  # <sendEmail>false</sendEmail>
     tax_number: str = ""  # <adoszam>12345678-1-42</adoszam>
+    tax_number_eu: str = ""  # <adoszamEU>HU55555555</adoszamEU>  // needed for reverse_invoice|storno only
     delivery_name: str = ""  # <postazasiNev>Kovács Bt. mailing name</postazasiNev>
     delivery_zip: str = ""  # <postazasiIrsz>2040</postazasiIrsz>
     delivery_city: str = ""  # <postazasiTelepules>Budaörs</postazasiTelepules>
@@ -84,21 +89,32 @@ class SzamlazzResponse:
 
     def __init__(self, response: Response):
         self.__response = response
-
-        # Parse XML and map into class members
-        root = ET.fromstring(self.__response.text)
-
-        self.success: str = self.__get_tag_text(root, 'sikeres')
-        self.invoice_number: str = self.__get_tag_text(root, 'szamlaszam')
-        self.invoice_net_price: str = self.__get_tag_text(root, 'szamlanetto')
-        self.invoice_gross_price: str = self.__get_tag_text(root, 'szamlabrutto')
-        self.receivables: str = self.__get_tag_text(root, 'kintlevoseg')
-        self.buyer_account_url: str = self.__get_tag_text(root, 'vevoifiokurl')
-        self.pdf: str = self.__get_tag_text(root, 'pdf')
+        content_type = response.headers.get("Content-Type")
+        if content_type == "application/octet-stream":
+            # Parse XML and map into class members
+            root = ET.fromstring(self.__response.text)
+            self.pdf: str = self.__get_tag_text(root, 'pdf')
+            self.pdf_bytes: bytes = b''
+        else:
+            self.pdf: str = ""
+            self.pdf_bytes: bytes = response.content
 
         # Error Handling
-        self.error_code: str = self.__get_tag_text(root, 'hibakod')
-        self.error_message: str = self.__get_tag_text(root, 'hibauzenet')
+        self.error_code: str = response.headers.get("szlahu_error_code")
+        self.error_message: str = response.headers.get("szlahu_error")
+        if self.error_message:
+            self.error_message = unquote(self.error_message)
+        self.success: str = "false" if self.error_code else "true"
+
+        # Extract Details
+        self.invoice_number: str = response.headers.get("szlahu_szamlaszam")
+        self.invoice_net_price: str = response.headers.get("szlahu_nettovegosszeg")
+        self.invoice_gross_price: str = response.headers.get("szlahu_bruttovegosszeg")
+        self.receivables: str = response.headers.get("szlahu_kintlevoseg")
+        self.buyer_account_url: str = response.headers.get("szlahu_vevoifiokurl")
+        if self.buyer_account_url:
+            self.buyer_account_url = unquote(response.headers.get("szlahu_vevoifiokurl"))
+
         self.__has_errors = self.error_code or self.error_message
         if self.has_errors:
             logger.error(f'Error Code: {self.error_code}')
@@ -131,13 +147,13 @@ class SzamlazzResponse:
         return self.__response.text
 
     def get_pdf_base64(self) -> str:
-        if not self.pdf:
+        if (not self.pdf) and (not self.pdf_bytes):
             raise PdfDataMissingError('No PDF was returned. Check the value of szamlaLetoltes|invoice_download')
         return self.pdf
 
     def get_pdf_bytes(self) -> bytes:
         pdf_base64 = self.get_pdf_base64()
-        return base64.b64decode(pdf_base64)
+        return base64.b64decode(pdf_base64) if pdf_base64 else self.pdf_bytes
 
     def write_pdf_to_disk(self, pdf_output_path: Path):
         if not pdf_output_path.parent.exists():

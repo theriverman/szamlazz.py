@@ -1,4 +1,4 @@
-__all__ = ["PdfDataMissingError", "template_xml", ]
+__all__ = ["PdfDataMissingError", "template_xml_generate_invoice", ]
 
 
 class PdfDataMissingError(Exception):
@@ -6,7 +6,7 @@ class PdfDataMissingError(Exception):
 
 
 # language=XML
-template_xml: str = """<?xml version="1.0" encoding="UTF-8"?>
+template_xml_generate_invoice: str = """<?xml version="1.0" encoding="UTF-8"?>
 <xmlszamla xmlns="http://www.szamlazz.hu/xmlszamla"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.szamlazz.hu/xmlszamla https://www.szamlazz.hu/szamla/docs/xsds/agent/xmlszamla.xsd">
@@ -83,3 +83,36 @@ template_xml: str = """<?xml version="1.0" encoding="UTF-8"?>
     </tetelek>
 </xmlszamla>
 """
+
+# language=XML
+template_xml_reverse_invoice = """<?xml version="1.0" encoding="UTF-8"?>
+<xmlszamlast xmlns="http://www.szamlazz.hu/xmlszamlast"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlast https://www.szamlazz.hu/szamla/docs/xsds/agentst/xmlszamlast.xsd">
+    <beallitasok>
+        <felhasznalo>{{ felhasznalo }}</felhasznalo>
+        <jelszo>{{ jelszo }}</jelszo>
+        <szamlaagentkulcs>{{ szamlaagentkulcs }}</szamlaagentkulcs>
+        <eszamla>{{ eszamla | lower }}</eszamla>
+        <szamlaLetoltes>{{ szamlaLetoltes | lower }}</szamlaLetoltes>
+        <szamlaLetoltesPld>{{ szamlaLetoltesPld }}</szamlaLetoltesPld>
+        <valaszVerzio>{{ valaszVerzio }}</valaszVerzio>
+    </beallitasok>
+    <fejlec>
+        <szamlaszam>{{ header.invoice_number }}</szamlaszam>
+        <keltDatum>{{ header.creating_date }}</keltDatum>
+        <teljesitesDatum>{{ header.payment_date }}</teljesitesDatum>
+        <tipus>SS</tipus>
+        <szamlaSablon>{{ header.invoice_template }}</szamlaSablon>  <!-- Értékkészlet: 'SzlaMost' | 'SzlaAlap' | 'SzlaNoEnv' | 'Szla8cm' | 'SzlaTomb' | 'SzlaFuvarlevelesAlap' -->
+    </fejlec>
+    <elado>
+        <emailReplyto>{{ merchant.reply_email_address }}</emailReplyto>
+        <emailTargy>{{ merchant.email_subject }}</emailTargy>
+        <emailSzoveg>{{ merchant.email_text }}</emailSzoveg>
+    </elado>
+    <vevo>
+        <email>{{ buyer.email }}</email>
+        <adoszam>{{ buyer.tax_number }}</adoszam>
+        <adoszamEU>{{ buyer.tax_number_eu }}</adoszamEU>
+    </vevo>
+</xmlszamlast>"""
