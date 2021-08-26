@@ -20,8 +20,9 @@ setuptools.setup(
         "Bug Tracker": "https://github.com/theriverman/szamlazz.py/issues",
     },
     install_requires=[
-        'Jinja2>=3.0.0',
-        'requests>=2.26.0'
+        'Jinja2~=3.0.0',
+        'requests~=2.26.0',
+        'lxml~=4.6.3',
     ],
     classifiers=[
         'Environment :: Web Environment',

@@ -1,17 +1,19 @@
-# -*- coding: utf-8 -*-
-
 import logging
 from os import getenv
 from pathlib import Path
+from datetime import datetime
 
-from szamlazz import SzamlazzClient, Header, Merchant, Buyer, Item, PdfDataMissingError
+from szamlazz import SzamlazzClient, Header, Merchant, Buyer, PdfDataMissingError
 
 
 logging.basicConfig(format='%(asctime)s %(name)s[:%(lineno)d] %(funcName)s %(levelname)s: %(message)s', datefmt='%b %d %H:%M:%S')
 logging.root.setLevel(logging.DEBUG)
+TODAY = datetime.today()
+TMP_FOLDER_PDF_FILES = Path("./.tmp/pdf_files")
 
 
 if __name__ == '__main__':
+    TMP_FOLDER_PDF_FILES.mkdir(parents=True, exist_ok=True)
     # noinspection SpellCheckingInspection
     client = SzamlazzClient(
         agent_key=getenv('agent_key'),
@@ -19,9 +21,9 @@ if __name__ == '__main__':
     )
 
     demo_header = Header(
-        invoice_number="E-DK-2021-10",
-        creating_date="2021-08-26",
-        payment_date="2021-08-26",
+        invoice_number="E-DK-2021-15",
+        creating_date=TODAY.strftime("%Y-%m-%d"),
+        payment_date=TODAY.strftime("%Y-%m-%d"),
 
     )
 
@@ -47,6 +49,6 @@ if __name__ == '__main__':
     response.print_errors()  # check for szamlazz.py errors
 
     try:
-        response.write_pdf_to_disk(Path(rf'D:\proj\szamlazz.py\.tmp\pdf_invoices\{response.invoice_number}.STORNO.pdf'))
+        response.write_pdf_to_disk(TMP_FOLDER_PDF_FILES / f'{response.invoice_number}.STORNO.pdf')
     except PdfDataMissingError as e:
         raise e

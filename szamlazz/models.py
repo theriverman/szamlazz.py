@@ -7,11 +7,13 @@ from urllib.parse import unquote
 # noinspection PyPep8Naming
 import xml.etree.ElementTree as ET
 
-from szamlazz.utils import PdfDataMissingError
 
-
-__all__ = ["Header", "Merchant", "Buyer", "Item", "SzamlazzResponse"]  # "WayBill"
+__all__ = ["Header", "Merchant", "Buyer", "Item", "Disbursement", "SzamlazzResponse", "PdfDataMissingError", ]  # "WayBill"
 logger = logging.getLogger(__name__)
+
+
+class PdfDataMissingError(Exception):
+    pass
 
 
 class Header(NamedTuple):
@@ -84,6 +86,13 @@ class Item(NamedTuple):
     comment_for_item: str = ""  # <megjegyzes>lorem ipsum</megjegyzes>
 
 
+class Disbursement(NamedTuple):
+    date: str
+    title: str
+    amount: float
+    description: str = ""
+
+
 class SzamlazzResponse:
     szamlazz_ns = "{http://www.szamlazz.hu/xmlszamlavalasz}"  # Szamlazz.hu response namespace
 
@@ -93,11 +102,11 @@ class SzamlazzResponse:
         if content_type == "application/octet-stream":
             # Parse XML and map into class members
             root = ET.fromstring(self.__response.text)
-            self.pdf: str = self.__get_tag_text(root, 'pdf')
-            self.pdf_bytes: bytes = b''
+            self.__pdf: str = self.__get_tag_text(root, 'pdf')
+            self.__pdf_bytes: bytes = b''
         else:
-            self.pdf: str = ""
-            self.pdf_bytes: bytes = response.content
+            self.__pdf_bytes: bytes = response.content
+            self.__pdf: str = base64.b64encode(self.__pdf_bytes).decode('ascii')
 
         # Error Handling
         self.error_code: str = response.headers.get("szlahu_error_code")
@@ -114,6 +123,7 @@ class SzamlazzResponse:
         self.buyer_account_url: str = response.headers.get("szlahu_vevoifiokurl")
         if self.buyer_account_url:
             self.buyer_account_url = unquote(response.headers.get("szlahu_vevoifiokurl"))
+        self.payment_method: str = response.headers.get("szlahu_fizetesmod")
 
         self.__has_errors = self.error_code or self.error_message
         if self.has_errors:
@@ -147,13 +157,13 @@ class SzamlazzResponse:
         return self.__response.text
 
     def get_pdf_base64(self) -> str:
-        if (not self.pdf) and (not self.pdf_bytes):
+        if (not self.__pdf) and (not self.__pdf_bytes):
             raise PdfDataMissingError('No PDF was returned. Check the value of szamlaLetoltes|invoice_download')
-        return self.pdf
+        return self.__pdf
 
     def get_pdf_bytes(self) -> bytes:
         pdf_base64 = self.get_pdf_base64()
-        return base64.b64decode(pdf_base64) if pdf_base64 else self.pdf_bytes
+        return base64.b64decode(pdf_base64) if pdf_base64 else self.__pdf_bytes
 
     def write_pdf_to_disk(self, pdf_output_path: Path):
         if not pdf_output_path.parent.exists():

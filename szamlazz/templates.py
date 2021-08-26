@@ -1,12 +1,8 @@
-__all__ = ["PdfDataMissingError", "template_xml_generate_invoice", "template_xml_reverse_invoice", ]
-
-
-class PdfDataMissingError(Exception):
-    pass
+__all__ = ["xml_generate_invoice", "xml_reverse_invoice", "xml_credit_entry", "xml_query_invoice_pdf", ]
 
 
 # language=XML
-template_xml_generate_invoice: str = """<?xml version="1.0" encoding="UTF-8"?>
+xml_generate_invoice: str = """<?xml version="1.0" encoding="UTF-8"?>
 <xmlszamla xmlns="http://www.szamlazz.hu/xmlszamla"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.szamlazz.hu/xmlszamla https://www.szamlazz.hu/szamla/docs/xsds/agent/xmlszamla.xsd">
@@ -85,7 +81,7 @@ template_xml_generate_invoice: str = """<?xml version="1.0" encoding="UTF-8"?>
 """
 
 # language=XML
-template_xml_reverse_invoice = """<?xml version="1.0" encoding="UTF-8"?>
+xml_reverse_invoice = """<?xml version="1.0" encoding="UTF-8"?>
 <xmlszamlast xmlns="http://www.szamlazz.hu/xmlszamlast"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlast https://www.szamlazz.hu/szamla/docs/xsds/agentst/xmlszamlast.xsd">
@@ -116,3 +112,39 @@ template_xml_reverse_invoice = """<?xml version="1.0" encoding="UTF-8"?>
         <adoszamEU>{{ buyer.tax_number_eu }}</adoszamEU>
     </vevo>
 </xmlszamlast>"""
+
+# language=XML
+xml_credit_entry = """<?xml version="1.0" encoding="UTF-8"?>
+<xmlszamlakifiz xmlns="http://www.szamlazz.hu/xmlszamlakifiz"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlakifiz https://www.szamlazz.hu/szamla/docs/xsds/agentkifiz/xmlszamlakifiz.xsd">
+  <beallitasok> <!-- settings -->
+    <felhasznalo>{{ felhasznalo }}</felhasznalo>
+    <jelszo>{{ jelszo }}</jelszo>
+    <szamlaagentkulcs>{{ szamlaagentkulcs }}</szamlaagentkulcs>
+    <szamlaszam>{{ szamlaszam }}</szamlaszam>
+    <additiv>{{ additiv | lower }}</additiv>
+  </beallitasok>
+  {%- for disbursement in disbursements %}
+  <kifizetes>
+    <datum>{{ disbursement.date }}</datum>
+    <jogcim>{{ disbursement.title }}</jogcim>
+    <osszeg>{{ disbursement.amount }}</osszeg>
+    <leiras>{{ disbursement.description }}</leiras>
+  </kifizetes>
+  {% endfor -%}
+</xmlszamlakifiz>"""
+
+
+# language=XML
+xml_query_invoice_pdf = """<?xml version="1.0" encoding="UTF-8"?>
+<xmlszamlapdf xmlns="http://www.szamlazz.hu/xmlszamlapdf"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchemainstance"
+              >
+  <felhasznalo>{{ felhasznalo }}</felhasznalo>
+  <jelszo>{{ jelszo }}</jelszo>
+  <szamlaagentkulcs>{{ szamlaagentkulcs }}</szamlaagentkulcs>
+  <szamlaszam>{{ szamlaszam }}</szamlaszam>
+  <valaszVerzio>{{ valaszVerzio }}</valaszVerzio>
+</xmlszamlapdf>
+"""

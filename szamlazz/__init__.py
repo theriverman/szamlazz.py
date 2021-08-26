@@ -1,3 +1,3 @@
 from .client import SzamlazzClient
 from .models import *
-from .utils import *
+from .templates import *
