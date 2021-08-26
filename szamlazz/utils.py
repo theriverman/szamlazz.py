@@ -1,4 +1,4 @@
-__all__ = ["PdfDataMissingError", "template_xml_generate_invoice", ]
+__all__ = ["PdfDataMissingError", "template_xml_generate_invoice", "template_xml_reverse_invoice", ]
 
 
 class PdfDataMissingError(Exception):
@@ -103,7 +103,7 @@ template_xml_reverse_invoice = """<?xml version="1.0" encoding="UTF-8"?>
         <keltDatum>{{ header.creating_date }}</keltDatum>
         <teljesitesDatum>{{ header.payment_date }}</teljesitesDatum>
         <tipus>SS</tipus>
-        <szamlaSablon>{{ header.invoice_template }}</szamlaSablon>  <!-- Értékkészlet: 'SzlaMost' | 'SzlaAlap' | 'SzlaNoEnv' | 'Szla8cm' | 'SzlaTomb' | 'SzlaFuvarlevelesAlap' -->
+        <szamlaSablon>{{ header.invoice_template }}</szamlaSablon>  <!-- Codomain: 'SzlaMost' | 'SzlaAlap' | 'SzlaNoEnv' | 'Szla8cm' | 'SzlaTomb' | 'SzlaFuvarlevelesAlap' -->
     </fejlec>
     <elado>
         <emailReplyto>{{ merchant.reply_email_address }}</emailReplyto>
