@@ -134,3 +134,4 @@ dmypy.json
 .tmp
 test_template.xml
 /.idea/
+examples/IntelliJ Config Template.run.xml
