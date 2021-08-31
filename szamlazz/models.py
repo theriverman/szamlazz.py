@@ -94,9 +94,14 @@ class Disbursement(NamedTuple):
 
 
 class SzamlazzResponse:
-    szamlazz_ns = "{http://www.szamlazz.hu/xmlszamlavalasz}"  # Szamlazz.hu response namespace
+    ns_szamla = "{http://www.szamlazz.hu/szamla}"  # Szamlazz.hu response namespace ( action: Querying the invoice XML )
+    ns_xmlszamlavalasz = "{http://www.szamlazz.hu/xmlszamlavalasz}"  # Szamlazz.hu response namespace
 
-    def __init__(self, response: Response):
+    def __init__(self, response: Response, raw_xml: bool = False):
+        if raw_xml:
+            self.xml_namespace = self.ns_szamla
+        else:
+            self.xml_namespace = self.ns_xmlszamlavalasz
         self.__response = response
         content_type = response.headers.get("Content-Type")
         if content_type == "application/octet-stream":
@@ -169,6 +174,8 @@ class SzamlazzResponse:
         if not pdf_output_path.parent.exists():
             raise FileNotFoundError(f"Output file's parent folder is missing: {pdf_output_path.parent.as_posix()}")
         data = self.get_pdf_bytes()
+        print('data ->', data)
+        print('pdf_output_path ->', pdf_output_path)
         with open(pdf_output_path, 'wb+') as f:
             f.write(data)
 
@@ -194,5 +201,5 @@ class SzamlazzResponse:
         return self.error_code, self.error_message
 
     def __get_tag_text(self, root: ET.Element, tag_name):
-        tag = root.find(f'{self.szamlazz_ns}{tag_name}')
+        tag = root.find(f'{self.xml_namespace}{tag_name}')
         return tag.text if tag is not None else None

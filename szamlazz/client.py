@@ -205,8 +205,43 @@ class SzamlazzClient:
         # logger.info(f'buyer_account_url = {response.buyer_account_url}')
         return response
 
-    def query_invoice_xml(self):
-        pass
+    def query_invoice_xml(self,
+                          invoice_number: str = "",
+                          order_number: str = "",
+                          pdf: bool = True,
+                          ) -> SzamlazzResponse:
+        """
+        Order number can be used in the query. In this case the last receipt with this order number will be returned
+
+        :param invoice_number: szamlaszam
+        :param order_number: rendelesSzam
+        :param pdf: pdf
+        :return: SzamlazzResponse
+        """
+        if invoice_number == "" and order_number == "":
+            raise AssertionError("invoice_number OR order_number must be provided")
+
+        settings = self._get_basic_settings()
+        settings['szamlaszam'] = invoice_number
+        settings['rendelesSzam'] = order_number
+        settings['pdf'] = pdf
+        payload_xml = {
+            **settings,  # see SzamlazzClient._get_basic_settings() for details
+        }
+        template = Template(templates.xml_query_invoice_xml)
+        output = template.render(payload_xml)
+        logger.debug('Rendered Template Output: ' + output)
+
+        ok, err = xsd.validate(xml=output, xsd=xsd.xsd_query_invoice_xml)
+        if not ok:
+            raise xsd.ValidationError(f"XML validation failed: " + err)
+
+        r = self._execute_request(action='action-szamla_agent_xml', payload_xml=output)
+        response = SzamlazzResponse(r, raw_xml=True)
+        logger.info(f'success = {response.success}')
+        logger.info(f'invoice_number = {response.invoice_number}')
+        # logger.info(f'buyer_account_url = {response.buyer_account_url}')
+        return response
 
     def delete_pro_forma_invoice(self):
         pass

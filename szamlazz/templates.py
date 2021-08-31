@@ -148,3 +148,21 @@ xml_query_invoice_pdf = """<?xml version="1.0" encoding="UTF-8"?>
   <valaszVerzio>{{ valaszVerzio }}</valaszVerzio>
 </xmlszamlapdf>
 """
+
+
+# language=XML
+xml_query_invoice_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<xmlszamlaxml xmlns="http://www.szamlazz.hu/xmlszamlaxml"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlaxml https://www.szamlazz.hu/szamla/docs/xsds/agentxml/xmlszamlaxml.xsd">
+  <felhasznalo>{{ felhasznalo }}</felhasznalo>
+  <jelszo>{{ jelszo }}</jelszo>
+  <szamlaagentkulcs>{{ szamlaagentkulcs }}</szamlaagentkulcs>
+  {% if rendelesSzam | length %}
+  <rendelesSzam>{{ rendelesSzam }}</rendelesSzam>
+  {% else %}
+  <szamlaszam>{{ szamlaszam }}</szamlaszam>
+  {% endif %}
+  <pdf>{{ pdf | lower }}</pdf>
+ </xmlszamlaxml>
+"""

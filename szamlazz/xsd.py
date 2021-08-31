@@ -358,3 +358,21 @@ xmlns:tns="http://www.szamlazz.hu/xmlszamlapdf" elementFormDefault="qualified">
   <element name="xmlszamlapdf" type="tns:beallitasokTipus"></element>
 </schema>
 """
+
+
+# language=XSD
+xsd_query_invoice_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.szamlazz.hu/xmlszamlaxml" xmlns:tns="http://www.szamlazz.hu/xmlszamlaxml" elementFormDefault="qualified">
+    <element name="xmlszamlaxml">
+        <complexType>
+            <sequence>
+                <element name="felhasznalo" type="string" maxOccurs="1" minOccurs="0"></element>
+                <element name="jelszo" type="string" maxOccurs="1" minOccurs="0"></element>
+                <element name="szamlaagentkulcs" type="string" maxOccurs="1" minOccurs="0"></element>
+                <element name="szamlaszam" type="string" maxOccurs="1" minOccurs="0"></element>
+                <element name="rendelesSzam" type="string" maxOccurs="1" minOccurs="0"></element>
+                <element name="pdf" type="boolean" maxOccurs="1" minOccurs="0"></element>
+            </sequence>
+        </complexType>
+    </element>
+</schema>"""
