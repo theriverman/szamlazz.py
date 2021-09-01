@@ -94,21 +94,20 @@ class Disbursement(NamedTuple):
 
 
 class SzamlazzResponse:
-    ns_szamla = "{http://www.szamlazz.hu/szamla}"  # Szamlazz.hu response namespace ( action: Querying the invoice XML )
-    ns_xmlszamlavalasz = "{http://www.szamlazz.hu/xmlszamlavalasz}"  # Szamlazz.hu response namespace
-
-    def __init__(self, response: Response, raw_xml: bool = False):
-        if raw_xml:
-            self.xml_namespace = self.ns_szamla
-        else:
-            self.xml_namespace = self.ns_xmlszamlavalasz
+    def __init__(self,
+                 response: Response,
+                 xml_namespace: str,
+                 ):
+        self.xml_namespace = xml_namespace
         self.__response = response
+        self.__action_success: bool = False
         content_type = response.headers.get("Content-Type")
         if content_type == "application/octet-stream":
             # Parse XML and map into class members
             root = ET.fromstring(self.__response.text)
-            self.__pdf: str = self.__get_tag_text(root, 'pdf')
+            self.__pdf: str = self.__get_tag_text(root, "pdf")
             self.__pdf_bytes: bytes = b''
+            self.__action_success: bool = True if (self.__get_tag_text(root, "sikeres") == "true") else False
         else:
             self.__pdf_bytes: bytes = response.content
             self.__pdf: str = base64.b64encode(self.__pdf_bytes).decode('ascii')
@@ -118,7 +117,7 @@ class SzamlazzResponse:
         self.error_message: str = response.headers.get("szlahu_error")
         if self.error_message:
             self.error_message = unquote(self.error_message)
-        self.success: str = "false" if self.error_code else "true"
+        self.http_request_success: str = "false" if self.error_code else "true"
 
         # Extract Details
         self.invoice_number: str = response.headers.get("szlahu_szamlaszam")
@@ -134,6 +133,10 @@ class SzamlazzResponse:
         if self.has_errors:
             logger.error(f'Error Code: {self.error_code}')
             logger.error(f'Error Message: {self.error_message}')
+
+    @property
+    def action_success(self) -> bool:
+        return self.__action_success
 
     @property
     def has_errors(self):
@@ -179,7 +182,8 @@ class SzamlazzResponse:
 
     def print_details(self):
         if not self.has_errors:
-            print('success:', self.success)
+            print('action success:', self.http_request_success)
+            print('http_request_success:', self.http_request_success)
             print('invoice_number:', self.invoice_number)
             print('invoice_net_price:', self.invoice_net_price)
             print('invoice_gross_price:', self.invoice_gross_price)

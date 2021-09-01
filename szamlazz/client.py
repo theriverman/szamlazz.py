@@ -1,15 +1,14 @@
-import base64
 import logging
-import requests
-
-from jinja2 import Template
-from requests.models import Response
+import logging
 from typing import List
 
+import requests
+from jinja2 import Template
+from requests.models import Response
+
+from szamlazz import templates
 from szamlazz import xsd
 from szamlazz.models import Header, Merchant, Buyer, Item, Disbursement, SzamlazzResponse
-from szamlazz import templates
-
 
 __all__ = ["SzamlazzClient", ]
 logger = logging.getLogger(__name__)
@@ -76,8 +75,8 @@ class SzamlazzClient:
 
         logger.debug('Rendered Template Output: ' + output)
         r = self._execute_request(action='action-xmlagentxmlfile', payload_xml=output)
-        response = SzamlazzResponse(r)
-        logger.info(f'success = {response.success}')
+        response = SzamlazzResponse(r, xml_namespace="xmlszamlavalasz")
+        logger.info(f'success = {response.http_request_success}')
         logger.info(f'invoice_number = {response.invoice_number}')
         logger.info(f'buyer_account_url = {response.buyer_account_url}')
         return response
@@ -125,8 +124,8 @@ class SzamlazzClient:
             raise xsd.ValidationError(f"XML validation failed: " + err)
 
         r = self._execute_request(action='action-szamla_agent_st', payload_xml=output)
-        response = SzamlazzResponse(r)
-        logger.info(f'success = {response.success}')
+        response = SzamlazzResponse(r, xml_namespace="")
+        logger.info(f'success = {response.http_request_success}')
         logger.info(f'invoice_number = {response.invoice_number}')
         logger.info(f'buyer_account_url = {response.buyer_account_url}')
         return response
@@ -164,8 +163,8 @@ class SzamlazzClient:
             raise xsd.ValidationError(f"XML validation failed: " + err)
 
         r = self._execute_request(action='action-szamla_agent_kifiz', payload_xml=output)
-        response = SzamlazzResponse(r)
-        logger.info(f'success = {response.success}')
+        response = SzamlazzResponse(r, xml_namespace="")
+        logger.info(f'success = {response.http_request_success}')
         logger.info(f'invoice_number = {response.invoice_number}')
         logger.info(f'buyer_account_url = {response.buyer_account_url}')
         return response
@@ -199,8 +198,8 @@ class SzamlazzClient:
             raise xsd.ValidationError(f"XML validation failed: " + err)
 
         r = self._execute_request(action='action-szamla_agent_pdf', payload_xml=output)
-        response = SzamlazzResponse(r)
-        logger.info(f'success = {response.success}')
+        response = SzamlazzResponse(r, xml_namespace="{http://www.szamlazz.hu/xmlszamlavalasz}")
+        logger.info(f'success = {response.http_request_success}')
         logger.info(f'invoice_number = {response.invoice_number}')
         # logger.info(f'buyer_account_url = {response.buyer_account_url}')
         return response
@@ -237,14 +236,46 @@ class SzamlazzClient:
             raise xsd.ValidationError(f"XML validation failed: " + err)
 
         r = self._execute_request(action='action-szamla_agent_xml', payload_xml=output)
-        response = SzamlazzResponse(r, raw_xml=True)
-        logger.info(f'success = {response.success}')
+        response = SzamlazzResponse(r, xml_namespace="{http://www.szamlazz.hu/szamla}")
+        logger.info(f'success = {response.http_request_success}')
         logger.info(f'invoice_number = {response.invoice_number}')
         # logger.info(f'buyer_account_url = {response.buyer_account_url}')
         return response
 
-    def delete_pro_forma_invoice(self):
-        pass
+    def delete_pro_forma_invoice(self,
+                                 invoice_number: str = "",
+                                 order_number: str = "",
+                                 ) -> SzamlazzResponse:
+        """
+        Order number can be used in the query. In this case the last receipt with this order number will be returned
+
+        :param invoice_number: szamlaszam - pro forma invoice's unique number
+        :param order_number: rendelesszam - manually added to the pro forma invoice upon generation
+        :return: SzamlazzResponse
+        """
+        if invoice_number == "" and order_number == "":
+            raise AssertionError("invoice_number OR order_number must be provided")
+
+        settings = self._get_basic_settings()
+        settings['szamlaszam'] = invoice_number
+        settings['rendelesszam'] = order_number
+        payload_xml = {
+            **settings,  # see SzamlazzClient._get_basic_settings() for details
+        }
+        template = Template(templates.delete_pro_forma_invoice)
+        output = template.render(payload_xml)
+        logger.debug('Rendered Template Output: ' + output)
+
+        ok, err = xsd.validate(xml=output, xsd=xsd.delete_pro_forma_invoice)
+        if not ok:
+            raise xsd.ValidationError(f"XML validation failed: " + err)
+
+        r = self._execute_request(action='action-szamla_agent_dijbekero_torlese', payload_xml=output)
+        response = SzamlazzResponse(r, xml_namespace="{http://www.szamlazz.hu/xmlszamladbkdelvalasz}")
+        logger.info(f'success = {response.http_request_success}')
+        logger.info(f'invoice_number = {response.invoice_number}')
+        # logger.info(f'buyer_account_url = {response.buyer_account_url}')
+        return response
 
     def generate_receipt(self):
         pass

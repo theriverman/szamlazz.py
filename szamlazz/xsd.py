@@ -376,3 +376,30 @@ xsd_query_invoice_xml = """<?xml version="1.0" encoding="UTF-8"?>
         </complexType>
     </element>
 </schema>"""
+
+
+# language=XML
+delete_pro_forma_invoice = """<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.szamlazz.hu/xmlszamladbkdel" xmlns:tns="http://www.szamlazz.hu/xmlszamladbkdel" elementFormDefault="qualified">
+    <complexType name="beallitasokTipus">
+        <sequence>
+            <element name="felhasznalo" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="jelszo" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="szamlaagentkulcs" type="string" maxOccurs="1" minOccurs="0"></element>
+        </sequence>
+    </complexType>
+    <complexType name="fejlecTipus">
+        <sequence>
+            <element name="szamlaszam" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="rendelesszam" type="string" maxOccurs="1" minOccurs="0"></element>
+        </sequence>
+    </complexType>
+    <element name="xmlszamladbkdel">
+      <complexType>
+     <sequence>
+        <element name="beallitasok" type="tns:beallitasokTipus" maxOccurs="1" minOccurs="1"></element>
+        <element name="fejlec" type="tns:fejlecTipus" maxOccurs="1" minOccurs="1"></element>
+     </sequence>
+      </complexType>
+    </element>
+</schema>"""

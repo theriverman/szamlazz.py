@@ -166,3 +166,22 @@ query_invoice_xml = """<?xml version="1.0" encoding="UTF-8"?>
   <pdf>{{ pdf | lower }}</pdf>
  </xmlszamlaxml>
 """
+
+# language=XML
+delete_pro_forma_invoice = """<?xml version="1.0" encoding="UTF-8"?>
+<xmlszamladbkdel xmlns="http://www.szamlazz.hu/xmlszamladbkdel"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://www.szamlazz.hu/xmlszamladbkdel http://www.szamlazz.hu/docs/xsds/szamladbkdel/xmlszamladbkdel.xsd">
+  <beallitasok>
+    <felhasznalo>{{ felhasznalo }}</felhasznalo>
+    <jelszo>{{ jelszo }}</jelszo>
+    <szamlaagentkulcs>{{ szamlaagentkulcs }}</szamlaagentkulcs>
+  </beallitasok>
+  <fejlec>
+    {% if rendelesszam | length %}
+    <rendelesszam>{{ rendelesszam }}</rendelesszam>
+    {% else %}
+    <szamlaszam>{{ szamlaszam }}</szamlaszam>
+    {% endif %}
+  </fejlec>
+</xmlszamladbkdel>"""
