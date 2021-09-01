@@ -24,7 +24,7 @@ def validate(xml: str, xsd: str) -> Tuple[bool, str]:
 
 
 # language=XSD
-xsd_generate_invoice = """<?xml version="1.0" encoding="UTF-8"?>
+generate_invoice = """<?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.szamlazz.hu/xmlszamla" xmlns:tns="http://www.szamlazz.hu/xmlszamla" elementFormDefault="qualified">
 
     <complexType name="vevoTipus">
@@ -260,7 +260,7 @@ xsd_generate_invoice = """<?xml version="1.0" encoding="UTF-8"?>
 """
 
 # language=XSD
-xsd_reverse_invoice = """<?xml version="1.0" encoding="UTF-8"?>
+reverse_invoice = """<?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.szamlazz.hu/xmlszamlast" xmlns:tns="http://www.szamlazz.hu/xmlszamlast" elementFormDefault="qualified">
     <complexType name="vevoTipus"><!-- If the TAX number of the buyer is missing from the original invoice, it can be added in this block -->
         <sequence>
@@ -313,7 +313,7 @@ xsd_reverse_invoice = """<?xml version="1.0" encoding="UTF-8"?>
 """
 
 # language=XSD
-xsd_credit_entry = """<?xml version="1.0" encoding="UTF-8"?>
+credit_entry = """<?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.szamlazz.hu/xmlszamlakifiz" xmlns:tns="http://www.szamlazz.hu/xmlszamlakifiz" elementFormDefault="qualified">
 <complexType name="beallitasokTipus">
   <sequence>
@@ -343,7 +343,7 @@ xsd_credit_entry = """<?xml version="1.0" encoding="UTF-8"?>
 
 
 # language=XSD
-xsd_query_invoice_pdf = """<?xml version="1.0" encoding="UTF-8"?>
+query_invoice_pdf = """<?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.szamlazz.hu/xmlszamlapdf"
 xmlns:tns="http://www.szamlazz.hu/xmlszamlapdf" elementFormDefault="qualified">
   <complexType name="beallitasokTipus">
@@ -361,7 +361,7 @@ xmlns:tns="http://www.szamlazz.hu/xmlszamlapdf" elementFormDefault="qualified">
 
 
 # language=XSD
-xsd_query_invoice_xml = """<?xml version="1.0" encoding="UTF-8"?>
+query_invoice_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.szamlazz.hu/xmlszamlaxml" xmlns:tns="http://www.szamlazz.hu/xmlszamlaxml" elementFormDefault="qualified">
     <element name="xmlszamlaxml">
         <complexType>
@@ -401,5 +401,109 @@ delete_pro_forma_invoice = """<?xml version="1.0" encoding="UTF-8"?>
         <element name="fejlec" type="tns:fejlecTipus" maxOccurs="1" minOccurs="1"></element>
      </sequence>
       </complexType>
+    </element>
+</schema>"""
+
+
+# language=XML
+generate_receipt = """<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.szamlazz.hu/xmlnyugtacreate" xmlns:tns="http://www.szamlazz.hu/xmlnyugtacreate" elementFormDefault="qualified">
+    <complexType name="beallitasokTipus">
+        <all>
+            <element name="felhasznalo" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="jelszo" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="szamlaagentkulcs" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="pdfLetoltes" type="boolean" maxOccurs="1" minOccurs="1"></element>
+        </all>
+    </complexType>
+    <complexType name="fejlecTipus">
+        <all>
+            <element name="hivasAzonosito" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="elotag" type="string" maxOccurs="1" minOccurs="1"></element>
+            <element name="fizmod" type="string" maxOccurs="1" minOccurs="1"></element>
+            <element name="penznem" type="string" maxOccurs="1" minOccurs="1"></element>
+            <element name="devizaarf" type="double" maxOccurs="1" minOccurs="0"></element>
+            <element name="devizabank" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="megjegyzes" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="pdfSablon" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="fokonyvVevo" type="string" maxOccurs="1" minOccurs="0"></element>
+        </all>
+    </complexType>
+    <complexType name="tetelTipus">
+        <all>
+            <element name="megnevezes" type="string" maxOccurs="1" minOccurs="1"></element>
+            <element name="azonosito" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="mennyiseg" type="double" maxOccurs="1" minOccurs="1"></element>
+            <element name="mennyisegiEgyseg" type="string" maxOccurs="1" minOccurs="1"></element>
+            <element name="nettoEgysegar" type="double" maxOccurs="1" minOccurs="1"></element>
+            <element name="afakulcs" type="string" maxOccurs="1" minOccurs="1"></element>
+            <element name="netto" type="double" maxOccurs="1" minOccurs="1"></element>
+            <element name="afa" type="double" maxOccurs="1" minOccurs="1"></element>
+            <element name="brutto" type="double" maxOccurs="1" minOccurs="1"></element>
+            <element name="fokonyv" type="tns:tetelFokonyvTipus" maxOccurs="1" minOccurs="0"></element>
+        </all>
+    </complexType>
+    <complexType name="tetelFokonyvTipus">
+        <all>
+            <element name="arbevetel" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="afa" type="string" maxOccurs="1" minOccurs="0"></element>
+        </all>
+    </complexType>
+    <complexType name="tetelekTipus">
+        <sequence>
+            <element name="tetel" type="tns:tetelTipus" maxOccurs="unbounded" minOccurs="1"></element>
+        </sequence>
+    </complexType>
+    <!-- jóváírások -->
+    <complexType name="kifizetesTipus">
+        <all>
+            <element name="fizetoeszkoz" type="string" maxOccurs="1" minOccurs="1"></element>
+            <element name="osszeg" type="double" maxOccurs="1" minOccurs="1"></element>
+            <element name="leiras" type="string" maxOccurs="1" minOccurs="0"></element>
+        </all>
+    </complexType>
+    <complexType name="kifizetesekTipus">
+        <sequence>
+            <element name="kifizetes"             type="tns:kifizetesTipus"   maxOccurs="unbounded" minOccurs="1"></element>
+        </sequence>
+    </complexType>
+    <element name="xmlnyugtacreate">
+        <complexType>
+            <all>
+                <element name="beallitasok" type="tns:beallitasokTipus" maxOccurs="1" minOccurs="1"></element>
+                <element name="fejlec" type="tns:fejlecTipus" maxOccurs="1" minOccurs="1"></element>
+                <element name="tetelek" type="tns:tetelekTipus" maxOccurs="1" minOccurs="1"></element>
+                <element name="kifizetesek" type="tns:kifizetesekTipus" maxOccurs="1" minOccurs="0"></element>
+            </all>
+        </complexType>
+    </element>
+</schema>"""
+
+
+# language=XML
+reverse_receipt = """<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.szamlazz.hu/xmlnyugtast" xmlns:tns="http://www.szamlazz.hu/xmlnyugtast" elementFormDefault="qualified">
+    <complexType name="beallitasokTipus">
+        <sequence>
+            <element name="felhasznalo" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="jelszo" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="szamlaagentkulcs" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="pdfLetoltes" type="boolean" maxOccurs="1" minOccurs="1"></element>
+        </sequence>
+    </complexType>
+    <complexType name="fejlecTipus">
+        <sequence>
+            <element name="nyugtaszam" type="string" maxOccurs="1" minOccurs="1"></element>
+            <element name="pdfSablon" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="hivasAzonosito" type="string" maxOccurs="1" minOccurs="0"></element>
+        </sequence>
+    </complexType>
+    <element name="xmlnyugtast">
+        <complexType>
+            <sequence>
+                <element name="beallitasok" type="tns:beallitasokTipus" maxOccurs="1" minOccurs="1"></element>
+                <element name="fejlec" type="tns:fejlecTipus" maxOccurs="1" minOccurs="1"></element>
+            </sequence>
+        </complexType>
     </element>
 </schema>"""
