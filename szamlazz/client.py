@@ -67,7 +67,7 @@ class SzamlazzClient:
             "items": items,
             **settings,  # see SzamlazzClient._get_basic_settings() for details
         }
-        template = Template(templates.xml_generate_invoice)
+        template = Template(templates.generate_invoice)
         output = template.render(payload_xml)
 
         ok, err = xsd.validate(xml=output, xsd=xsd.xsd_generate_invoice)
@@ -116,7 +116,7 @@ class SzamlazzClient:
             "buyer": buyer,
             **settings,  # see SzamlazzClient._get_basic_settings() for details
         }
-        template = Template(templates.xml_reverse_invoice)
+        template = Template(templates.reverse_invoice)
         output = template.render(payload_xml)
         logger.debug('Rendered Template Output: ' + output)
 
@@ -155,7 +155,7 @@ class SzamlazzClient:
             "disbursements": disbursements,
             **settings,  # see SzamlazzClient._get_basic_settings() for details
         }
-        template = Template(templates.xml_credit_entry)
+        template = Template(templates.credit_entry)
         output = template.render(payload_xml)
         logger.debug('Rendered Template Output: ' + output)
 
@@ -190,7 +190,7 @@ class SzamlazzClient:
         payload_xml = {
             **settings,  # see SzamlazzClient._get_basic_settings() for details
         }
-        template = Template(templates.xml_query_invoice_pdf)
+        template = Template(templates.query_invoice_pdf)
         output = template.render(payload_xml)
         logger.debug('Rendered Template Output: ' + output)
 
@@ -228,7 +228,7 @@ class SzamlazzClient:
         payload_xml = {
             **settings,  # see SzamlazzClient._get_basic_settings() for details
         }
-        template = Template(templates.xml_query_invoice_xml)
+        template = Template(templates.query_invoice_xml)
         output = template.render(payload_xml)
         logger.debug('Rendered Template Output: ' + output)
 

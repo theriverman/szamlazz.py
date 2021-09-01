@@ -1,8 +1,8 @@
-__all__ = ["xml_generate_invoice", "xml_reverse_invoice", "xml_credit_entry", "xml_query_invoice_pdf", ]
+__all__ = ["generate_invoice", "reverse_invoice", "credit_entry", "query_invoice_pdf", ]
 
 
 # language=XML
-xml_generate_invoice: str = """<?xml version="1.0" encoding="UTF-8"?>
+generate_invoice: str = """<?xml version="1.0" encoding="UTF-8"?>
 <xmlszamla xmlns="http://www.szamlazz.hu/xmlszamla"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.szamlazz.hu/xmlszamla https://www.szamlazz.hu/szamla/docs/xsds/agent/xmlszamla.xsd">
@@ -81,7 +81,7 @@ xml_generate_invoice: str = """<?xml version="1.0" encoding="UTF-8"?>
 """
 
 # language=XML
-xml_reverse_invoice = """<?xml version="1.0" encoding="UTF-8"?>
+reverse_invoice = """<?xml version="1.0" encoding="UTF-8"?>
 <xmlszamlast xmlns="http://www.szamlazz.hu/xmlszamlast"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlast https://www.szamlazz.hu/szamla/docs/xsds/agentst/xmlszamlast.xsd">
@@ -114,7 +114,7 @@ xml_reverse_invoice = """<?xml version="1.0" encoding="UTF-8"?>
 </xmlszamlast>"""
 
 # language=XML
-xml_credit_entry = """<?xml version="1.0" encoding="UTF-8"?>
+credit_entry = """<?xml version="1.0" encoding="UTF-8"?>
 <xmlszamlakifiz xmlns="http://www.szamlazz.hu/xmlszamlakifiz"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlakifiz https://www.szamlazz.hu/szamla/docs/xsds/agentkifiz/xmlszamlakifiz.xsd">
@@ -137,7 +137,7 @@ xml_credit_entry = """<?xml version="1.0" encoding="UTF-8"?>
 
 
 # language=XML
-xml_query_invoice_pdf = """<?xml version="1.0" encoding="UTF-8"?>
+query_invoice_pdf = """<?xml version="1.0" encoding="UTF-8"?>
 <xmlszamlapdf xmlns="http://www.szamlazz.hu/xmlszamlapdf"
               xmlns:xsi="http://www.w3.org/2001/XMLSchemainstance"
               >
@@ -151,7 +151,7 @@ xml_query_invoice_pdf = """<?xml version="1.0" encoding="UTF-8"?>
 
 
 # language=XML
-xml_query_invoice_xml = """<?xml version="1.0" encoding="UTF-8"?>
+query_invoice_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <xmlszamlaxml xmlns="http://www.szamlazz.hu/xmlszamlaxml"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlaxml https://www.szamlazz.hu/szamla/docs/xsds/agentxml/xmlszamlaxml.xsd">

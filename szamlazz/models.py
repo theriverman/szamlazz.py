@@ -174,8 +174,6 @@ class SzamlazzResponse:
         if not pdf_output_path.parent.exists():
             raise FileNotFoundError(f"Output file's parent folder is missing: {pdf_output_path.parent.as_posix()}")
         data = self.get_pdf_bytes()
-        print('data ->', data)
-        print('pdf_output_path ->', pdf_output_path)
         with open(pdf_output_path, 'wb+') as f:
             f.write(data)
 
