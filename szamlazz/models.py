@@ -74,16 +74,39 @@ class Buyer(NamedTuple):
 #     futarSzolgalat: str = ""  #
 
 
+class ItemLedger(NamedTuple):
+    # language=XML
+    """
+    <sequence>
+        <element name="gazdasagiEsem" type="string" maxOccurs="1" minOccurs="0"></element>
+        <element name="gazdasagiEsemAfa" type="string" maxOccurs="1" minOccurs="0"></element>
+        <element name="arbevetelFokonyviSzam" type="string" maxOccurs="1" minOccurs="0"></element>
+        <element name="afaFokonyviSzam" type="string" maxOccurs="1" minOccurs="0"></element>
+        <element name="elszDatumTol" type="date" maxOccurs="1" minOccurs="0"></element>
+        <element name="elszDatumIg" type="date" maxOccurs="1" minOccurs="0"></element>
+    </sequence>
+    """
+    economic_event: str = ""  # <gazdasagiesemeny></gazdasagiesemeny>
+    economic_event_tax: str = ""  # <gazdasagiesemenyafa></gazdasagiesemenyafa>
+    sales_ledger_number: str = ""
+    vat_ledger_number: str = ""
+    settlement_date_from: str = ""
+    settlement_date_to: str = ""
+
+
 class Item(NamedTuple):
     name: str = ""  # <megnevezes>Elado izé</megnevezes>
+    identifier: str = ""  # <azonosito>ASD-123</azonosito>
     quantity: str = ""  # <mennyiseg>1.0</mennyiseg>
     quantity_unit: str = ""  # <mennyisegiEgyseg>db</mennyisegiEgyseg>
     unit_price: str = ""  # <nettoEgysegar>10000</nettoEgysegar>
     vat_rate: str = ""  # <afakulcs>27</afakulcs>
+    margin_tax_base: float = ""  # <arresAfaAlap>10.25</arresAfaAlap>
     net_price: str = ""  # <nettoErtek>10000.0</nettoErtek>
     vat_amount: str = ""  # <afaErtek>2700.0</afaErtek>
     gross_amount: str = ""  # <bruttoErtek>12700.0</bruttoErtek>
     comment_for_item: str = ""  # <megjegyzes>lorem ipsum</megjegyzes>
+    item_ledger: ItemLedger = ""  # <element name="tetelFokonyv" type="tns:tetelFokonyvTipus" maxOccurs="1" minOccurs="0"></element>
 
 
 class Disbursement(NamedTuple):
@@ -113,11 +136,11 @@ class SzamlazzResponse:
             # Parse XML and map into class members
             root = ET.fromstring(self.__response.text)
             self.__pdf: str = self.__get_tag_text(root, "pdf")
-            self.__pdf_bytes: bytes = b''
+            self.__pdf_bytes: bytes = b""
             self.__action_success: bool = True if (self.__get_tag_text(root, "sikeres") == "true") else False
         else:
             self.__pdf_bytes: bytes = response.content
-            self.__pdf: str = base64.b64encode(self.__pdf_bytes).decode('ascii')
+            self.__pdf: str = base64.b64encode(self.__pdf_bytes).decode("ascii")
 
         # Error Handling
         self.error_code: str = response.headers.get("szlahu_error_code")
@@ -138,8 +161,8 @@ class SzamlazzResponse:
 
         self.__has_errors = self.error_code or self.error_message
         if self.has_errors:
-            logger.error(f'Error Code: {self.error_code}')
-            logger.error(f'Error Message: {self.error_message}')
+            logger.error(f"Error Code: {self.error_code}")
+            logger.error(f"Error Message: {self.error_message}")
 
     @property
     def action_success(self) -> bool:
@@ -172,8 +195,13 @@ class SzamlazzResponse:
         return self.__response.text
 
     def get_pdf_base64(self) -> str:
+        """
+        Get PDF from response in Base64 format
+        :return: PDF (in Base64 format)
+        :rtype: str
+        """
         if (not self.__pdf) and (not self.__pdf_bytes):
-            raise PdfDataMissingError('No PDF was returned. Check the value of szamlaLetoltes|invoice_download')
+            raise PdfDataMissingError("No PDF was returned. Check the value of szamlaLetoltes|invoice_download")
         return self.__pdf
 
     def get_pdf_bytes(self) -> bytes:
@@ -184,18 +212,18 @@ class SzamlazzResponse:
         if not pdf_output_path.parent.exists():
             raise FileNotFoundError(f"Output file's parent folder is missing: {pdf_output_path.parent.as_posix()}")
         data = self.get_pdf_bytes()
-        with open(pdf_output_path, 'wb+') as f:
+        with open(pdf_output_path, "wb+") as f:
             f.write(data)
 
     def print_details(self):
         if not self.has_errors:
-            print('action success:', self.http_request_success)
-            print('http_request_success:', self.http_request_success)
-            print('invoice_number:', self.invoice_number)
-            print('invoice_net_price:', self.invoice_net_price)
-            print('invoice_gross_price:', self.invoice_gross_price)
-            print('receivables:', self.receivables)
-            print('buyer_account_url:', self.buyer_account_url)
+            print("action success:", self.http_request_success)
+            print("http_request_success:", self.http_request_success)
+            print("invoice_number:", self.invoice_number)
+            print("invoice_net_price:", self.invoice_net_price)
+            print("invoice_gross_price:", self.invoice_gross_price)
+            print("receivables:", self.receivables)
+            print("buyer_account_url:", self.buyer_account_url)
         else:
             self.print_errors()
 
@@ -205,10 +233,10 @@ class SzamlazzResponse:
         :return: Tuple[error_code, error_message]
         """
         if self.has_errors:
-            print('error_code:', self.error_code)
-            print('error_message:', self.error_message)
+            print("error_code:", self.error_code)
+            print("error_message:", self.error_message)
         return self.error_code, self.error_message
 
     def __get_tag_text(self, root: ET.Element, tag_name):
-        tag = root.find(f'{self.xml_namespace}{tag_name}')
+        tag = root.find(f"{self.xml_namespace}{tag_name}")
         return tag.text if tag is not None else None

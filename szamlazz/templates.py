@@ -191,64 +191,56 @@ delete_pro_forma_invoice = """<?xml version="1.0" encoding="UTF-8"?>
 generate_receipt = """<?xml version="1.0" encoding="UTF-8"?>
 <xmlnyugtacreate xmlns="http://www.szamlazz.hu/xmlnyugtacreate" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlnyugtacreate http://www.szamlazz.hu/docs/xsds/nyugta/xmlnyugtacreate.xsd">
   <beallitasok>                                                      <!-- REQ         -->
-    <felhasznalo>Test123</felhasznalo>      <!-- REQ string  --> <!--user login name -->
-    <jelszo>Test123</jelszo>                      <!-- REQ string  --> <!-- user password -->
-    <szamlaagentkulcs>Please fill!</szamlaagentkulcs>
-    <pdfLetoltes>false</pdfLetoltes>                       <!-- REQ boolean --> <!-- PDF download -->
+    <felhasznalo>{{ felhasznalo }}</felhasznalo>
+    <jelszo>{{ jelszo }}</jelszo>
+    <szamlaagentkulcs>{{ szamlaagentkulcs }}</szamlaagentkulcs>
+    <pdfLetoltes>{{ pdfLetoltes }}</pdfLetoltes>
   </beallitasok>
   <fejlec>                                                <!-- REQ         -->
-    <hivasAzonosito></hivasAzonosito>     <!--     string  --> <!-- unique identifier of the call, duplication must be avoided-->
-    <elotag>NYGTA</elotag>                    <!-- REQ string  --> <!-- receipt number prefix, required ==> NYGTA-2017-111 -->
-    <fizmod>készpénz</fizmod>               <!-- REQ string  --> <!-- payment method, free text field, values ​​used on the interface are: átutalás, készpénz, bankkártya, csekk, utánvét, ajándékutalvány, barion, barter, csoportos beszedés, OTP Simple, kompenzáció, kupon, PayPal,PayU, SZÉP kártya, utalvány -->
-    <penznem>Ft</penznem>                   <!-- REQ string  --> <!-- currency: Ft, HUF, EUR, USD stb. -->
-    <devizabank>MNB</devizabank>         <!--     string  --> <!-- in case of foreign bill (not Ft/HUF) the name of the Bank -->
-    <devizaarf>0.0</devizaarf>                 <!--     string  --> <!-- exchange rate -->
-    <megjegyzes></megjegyzes>             <!--     string  --> <!-- free text description,  shown on the receipt -->
-    <pdfSablon></pdfSablon>                   <!--     string  --> <!--  in case of custom PDF template, the identifier of the used template-->
-    <fokonyvVevo></fokonyvVevo>                      <!--     string  --> <!-- general ledger ID of the customer -->
+    <hivasAzonosito>{{ fejlec.hivasAzonosito }}</hivasAzonosito>     <!--     string  --> <!-- unique identifier of the call, duplication must be avoided-->
+    <elotag>{{ fejlec.elotag }}</elotag>                    <!-- REQ string  --> <!-- receipt number prefix, required ==> NYGTA-2017-111 -->
+    <fizmod>{{ fejlec.fizmod }}</fizmod>               <!-- REQ string  --> <!-- payment method, free text field, values ​​used on the interface are: átutalás, készpénz, bankkártya, csekk, utánvét, ajándékutalvány, barion, barter, csoportos beszedés, OTP Simple, kompenzáció, kupon, PayPal,PayU, SZÉP kártya, utalvány -->
+    <penznem>{{ fejlec.penznem }}</penznem>                   <!-- REQ string  --> <!-- currency: Ft, HUF, EUR, USD stb. -->
+    <devizabank>{{ fejlec.devizabank }}</devizabank>         <!--     string  --> <!-- in case of foreign bill (not Ft/HUF) the name of the Bank -->
+    <devizaarf>{{ fejlec.devizaarf }}</devizaarf>                 <!--     string  --> <!-- exchange rate -->
+    <megjegyzes>{{ fejlec.megjegyzes }}</megjegyzes>             <!--     string  --> <!-- free text description,  shown on the receipt -->
+    <pdfSablon>{{ fejlec.pdfSablon }}</pdfSablon>                   <!--     string  --> <!--  in case of custom PDF template, the identifier of the used template-->
+    <fokonyvVevo>{{ fejlec.fokonyvVevo }}</fokonyvVevo>                      <!--     string  --> <!-- general ledger ID of the customer -->
   </fejlec>
-  <tetelek>                                        <!-- REQ         -->
+  <tetelek>
+  {%- for tetel in tetelek %}
     <tetel>                                         <!-- REQ         --> <!-- at least one item is required to issue a receipt  -->
-      <megnevezes>Kitten doormat</megnevezes>         <!-- REQ string  --> <!-- name of the receipt -->
-      <azonosito></azonosito>                                        <!--     string  --> <!-- ID of the receipt -->
-      <mennyiseg>2.0</mennyiseg>                               <!-- REQ double  --> <!-- item quantity -->
-      <mennyisegiEgyseg>db</mennyisegiEgyseg>          <!-- REQ string  --> <!-- unit of quantity -->
-      <nettoEgysegar>10000</nettoEgysegar>                <!-- REQ double  --> <!-- net unit price -->
-      <netto>20000.0</netto>                                 <!-- REQ double  --> <!-- net value (quantity * net unit price) -->
-      <afakulcs>27</afakulcs>                                 <!-- REQ string  --> <!-- VAT rate, values: 0, 5, 10, 27, AAM, TAM, EU, EUK, MAA, F.AFA, K.AFA, ÁKK,HO, EUE, EUFADE, EUFAD37, ATK, NAM, EAM, KBAUK, KBAET -->
-      <afa>5400.0</afa>                                                <!-- REQ double  --> <!-- VAT total value -->
-      <brutto>25400.0</brutto>                                      <!-- REQ double  --> <!-- gross total value -->
+      <megnevezes>{{ tetel.megnevezes }}</megnevezes>         <!-- REQ string  --> <!-- name of the receipt -->
+      <azonosito>{{ tetel.azonosito }}</azonosito>                                        <!--     string  --> <!-- ID of the receipt -->
+      <mennyiseg>{{ tetel.mennyiseg }}</mennyiseg>                               <!-- REQ double  --> <!-- item quantity -->
+      <mennyisegiEgyseg>{{ tetel.mennyisegiEgyseg }}</mennyisegiEgyseg>          <!-- REQ string  --> <!-- unit of quantity -->
+      <nettoEgysegar>{{ tetel.nettoEgysegar }}</nettoEgysegar>                <!-- REQ double  --> <!-- net unit price -->
+      <netto>{{ tetel.netto }}</netto>                                 <!-- REQ double  --> <!-- net value (quantity * net unit price) -->
+      <afakulcs>{{ tetel.afakulcs }}</afakulcs>                                 <!-- REQ string  --> <!-- VAT rate, values: 0, 5, 10, 27, AAM, TAM, EU, EUK, MAA, F.AFA, K.AFA, ÁKK,HO, EUE, EUFADE, EUFAD37, ATK, NAM, EAM, KBAUK, KBAET -->
+      <afa>{{ tetel.afa }}</afa>                                                <!-- REQ double  --> <!-- VAT total value -->
+      <brutto>{{ tetel.brutto }}</brutto>                                      <!-- REQ double  --> <!-- gross total value -->
       <fokonyv>                                                             <!--             --> <!-- general ledger information -->
-        <arbevetel>...</arbevetel>                                   <!--     string  --> <!-- sales general ledger ID  -->
-        <afa>...</afa>                                                     <!--     string  --> <!-- VAT general ledger ID -->
+        <arbevetel>{{ tetel.fokonyv_arbevetel }}</arbevetel>                                   <!--     string  --> <!-- sales general ledger ID  -->
+        <afa>{{ tetel.fokonyv_afa }}</afa>                                                     <!--     string  --> <!-- VAT general ledger ID -->
       </fokonyv>
     </tetel>
-    <tetel>
-      <megnevezes>Puppy doormat</megnevezes>
-      <mennyiseg>2.0</mennyiseg>
-      <mennyisegiEgyseg>db</mennyisegiEgyseg>
-      <nettoEgysegar>10000</nettoEgysegar>
-      <netto>20000.0</netto>
-      <afakulcs>ÁKK</afakulcs>
-      <afa>5400.0</afa>
-      <brutto>25400.0</brutto>
-    </tetel>
+  {% endfor -%}
   </tetelek>
   <!--
     The <kifizetesek> section (payments) is not mandatory, but if present,
     then the sum of the values should be equal with the total amount of the receipt.
   -->
-  <kifizetesek>                                                             <!--     string  --> <!-- details of the payment method -->
+  {% if kifizetesek | length %}
+  <kifizetesek>
+  {%- for kifizetes in kifizetesek %}
     <kifizetes>
-      <fizetoeszkoz>voucher</fizetoeszkoz>                    <!-- REQ string  --> <!-- name of the legal tender -->
-      <osszeg>30000.0</osszeg>                                    <!-- REQ double  --> <!-- paid amount with legal tender -->
-      <leiras>OTP SZÉP kártya</leiras>                            <!--     double  --> <!-- description of the legal tender -->
+      <fizetoeszkoz>{{ kifizetes.fizetoeszkoz }}</fizetoeszkoz>
+      <osszeg>{{ kifizetes.osszeg }}</osszeg>
+      <leiras>{{ kifizetes.leiras }}</leiras>
     </kifizetes>
-    <kifizetes>
-      <fizetoeszkoz>debit card</fizetoeszkoz>
-      <osszeg>20800.0</osszeg>
-    </kifizetes>
+  {% endfor -%}
   </kifizetesek>
+  {% endif %}
 </xmlnyugtacreate>"""
 
 

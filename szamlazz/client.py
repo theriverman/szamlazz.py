@@ -259,9 +259,70 @@ class SzamlazzClient:
         logger.info(f"invoice_number = {response.invoice_number}")
         return response
 
-    def generate_receipt(self,
-                         ) -> SzamlazzResponse:
-        raise NotImplementedError
+    def generate_receipt(self, payload: dict) -> Response:
+        """
+        https://docs.szamlazz.hu/#generating-a-receipt
+
+        Key details from https://docs.szamlazz.hu/#expected-results-of-generating-receipts
+        Every successful call contains the <sikeres>true</sikeres> field in the response.
+        In case the generation of the receipt fails and the result field is false: <sikeres>false</sikeres>,
+        two additional fields will be included in the response, <hibakod/> for the error code and <hibauzenet/> for the error message itself.
+
+        Note: You should use hivasAzonosito to make the call fault tolerant.
+              If this field is in use, it needs to be unique, otherwise the API call will be unsuccessful.
+              This ensures that if the same XML is posted multiple times, it will not duplicate an existing receipt.
+
+        :payload: dict
+        :return: requests.models.Response
+        """
+
+        # language=Python
+        """
+from szamlazz import SzamlazzClient
+
+client = SzamlazzClient(
+agent_key="ASD123",
+)
+settings = client.get_basic_settings()
+fejlec = {
+    "hivasAzonosito": "",
+    "elotag": "",
+    "fizmod": "",
+    "penznem": "",
+    "devizabank": "",
+    "devizaarf": "",
+    "megjegyzes": "",
+    "pdfSablon": "",
+    "fokonyvVevo": "",
+}
+tetel_1 = {
+    "megnevezes": "",
+    "azonosito": "",
+    "mennyiseg": "",
+    "mennyisegiEgyseg": "",
+    "nettoEgysegar": "",
+    "netto": "",
+    "afakulcs": "",
+    "afa": "",
+    "brutto": "",
+    "fokonyv_arbevetel": "",
+    "fokonyv_afa": "",
+}
+payload = {
+    "fejlec": fejlec,
+    "tetelek": [tetel_1, ],
+    **settings
+}
+
+# pass payload to generate_receipt(payload=payload)
+        """
+
+        return self.request_maker(
+            action="action-szamla_agent_nyugta_create",
+            template=templates.generate_receipt,
+            template_data=payload,
+            xsd_xml=xsd.generate_receipt,
+        )
 
     def reverse_receipt(self,
                         receipt_number: str,
