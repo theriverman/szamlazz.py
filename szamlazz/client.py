@@ -75,16 +75,13 @@ class SzamlazzClient:
             "items": items,
             **settings,  # see SzamlazzClient.get_basic_settings() for details
         }
-        template = Template(templates.generate_invoice)
-        output = template.render(payload_xml)
-
-        ok, err = xsd.validate(xml=output, xsd=xsd.generate_invoice)
-        if not ok:
-            raise xsd.ValidationError(f"XML validation failed: " + err)
-
-        logger.debug(f"Rendered Template Output: {output}")
-        r = self._execute_request(action="action-xmlagentxmlfile", payload_xml=output)
-        response = SzamlazzResponse(r, xml_namespace="xmlszamlavalasz")
+        r = self.request_maker(
+            action="action-xmlagentxmlfile",
+            template=templates.generate_invoice,
+            template_data=payload_xml,
+            xsd_xml=xsd.generate_invoice,
+        )
+        response = SzamlazzResponse(r, xml_namespace="{http://www.szamlazz.hu/xmlszamlavalasz}")
         logger.info(f"success = {response.http_request_success}")
         logger.info(f"invoice_number = {response.invoice_number}")
         logger.info(f"buyer_account_url = {response.buyer_account_url}")
@@ -124,15 +121,12 @@ class SzamlazzClient:
             "buyer": buyer,
             **settings,  # see SzamlazzClient.get_basic_settings() for details
         }
-        template = Template(templates.reverse_invoice)
-        output = template.render(payload_xml)
-        logger.debug("Rendered Template Output: " + output)
-
-        ok, err = xsd.validate(xml=output, xsd=xsd.reverse_invoice)
-        if not ok:
-            raise xsd.ValidationError(f"XML validation failed: " + err)
-
-        r = self._execute_request(action="action-szamla_agent_st", payload_xml=output)
+        r = self.request_maker(
+            action="action-szamla_agent_st",
+            template=templates.reverse_invoice,
+            template_data=payload_xml,
+            xsd_xml=xsd.reverse_invoice,
+        )
         response = SzamlazzResponse(r, xml_namespace="")
         logger.info(f"success = {response.http_request_success}")
         logger.info(f"invoice_number = {response.invoice_number}")
@@ -163,15 +157,12 @@ class SzamlazzClient:
             "disbursements": disbursements,
             **settings,  # see SzamlazzClient.get_basic_settings() for details
         }
-        template = Template(templates.credit_entry)
-        output = template.render(payload_xml)
-        logger.debug(f"Rendered Template Output: {output}")
-
-        ok, err = xsd.validate(xml=output, xsd=xsd.credit_entry)
-        if not ok:
-            raise xsd.ValidationError(f"XML validation failed: " + err)
-
-        r = self._execute_request(action="action-szamla_agent_kifiz", payload_xml=output)
+        r = self.request_maker(
+            action="action-szamla_agent_kifiz",
+            template=templates.credit_entry,
+            template_data=payload_xml,
+            xsd_xml=xsd.credit_entry,
+        )
         response = SzamlazzResponse(r, xml_namespace="")
         logger.info(f"success = {response.http_request_success}")
         logger.info(f"invoice_number = {response.invoice_number}")
@@ -195,18 +186,12 @@ class SzamlazzClient:
         """
         settings = self.get_basic_settings()
         settings["szamlaszam"] = invoice_number
-        payload_xml = {
-            **settings,  # see SzamlazzClient.get_basic_settings() for details
-        }
-        template = Template(templates.query_invoice_pdf)
-        output = template.render(payload_xml)
-        logger.debug(f"Rendered Template Output: {output}")
-
-        ok, err = xsd.validate(xml=output, xsd=xsd.query_invoice_pdf)
-        if not ok:
-            raise xsd.ValidationError(f"XML validation failed: " + err)
-
-        r = self._execute_request(action="action-szamla_agent_pdf", payload_xml=output)
+        r = self.request_maker(
+            action="action-szamla_agent_pdf",
+            template=templates.query_invoice_pdf,
+            template_data=settings,
+            xsd_xml=xsd.query_invoice_pdf,
+        )
         response = SzamlazzResponse(r, xml_namespace="{http://www.szamlazz.hu/xmlszamlavalasz}")
         logger.info(f"success = {response.http_request_success}")
         logger.info(f"invoice_number = {response.invoice_number}")
@@ -232,18 +217,13 @@ class SzamlazzClient:
         settings["szamlaszam"] = invoice_number
         settings["rendelesSzam"] = order_number
         settings["pdf"] = pdf
-        payload_xml = {
-            **settings,  # see SzamlazzClient.get_basic_settings() for details
-        }
-        template = Template(templates.query_invoice_xml)
-        output = template.render(payload_xml)
-        logger.debug("Rendered Template Output: " + output)
+        r = self.request_maker(
+            action="action-szamla_agent_xml",
+            template=templates.query_invoice_xml,
+            template_data=settings,
+            xsd_xml=xsd.query_invoice_xml
 
-        ok, err = xsd.validate(xml=output, xsd=xsd.query_invoice_xml)
-        if not ok:
-            raise xsd.ValidationError(f"XML validation failed: " + err)
-
-        r = self._execute_request(action="action-szamla_agent_xml", payload_xml=output)
+        )
         response = SzamlazzResponse(r, xml_namespace="{http://www.szamlazz.hu/szamla}")
         logger.info(f"success = {response.http_request_success}")
         logger.info(f"invoice_number = {response.invoice_number}")
@@ -268,18 +248,12 @@ class SzamlazzClient:
         settings = self.get_basic_settings()
         settings["szamlaszam"] = invoice_number
         settings["rendelesszam"] = order_number
-        payload_xml = {
-            **settings,  # see SzamlazzClient.get_basic_settings() for details
-        }
-        template = Template(templates.delete_pro_forma_invoice)
-        output = template.render(payload_xml)
-        logger.debug(f"Rendered Template Output: {output}")
-
-        ok, err = xsd.validate(xml=output, xsd=xsd.delete_pro_forma_invoice)
-        if not ok:
-            raise xsd.ValidationError(f"XML validation failed: " + err)
-
-        r = self._execute_request(action="action-szamla_agent_dijbekero_torlese", payload_xml=output)
+        r = self.request_maker(
+            action="action-szamla_agent_dijbekero_torlese",
+            template=templates.delete_pro_forma_invoice,
+            template_data=settings,
+            xsd_xml=xsd.delete_pro_forma_invoice,
+        )
         response = SzamlazzResponse(r, xml_namespace="{http://www.szamlazz.hu/xmlszamladbkdelvalasz}")
         logger.info(f"success = {response.http_request_success}")
         logger.info(f"invoice_number = {response.invoice_number}")
@@ -302,26 +276,42 @@ class SzamlazzClient:
         settings = self.get_basic_settings()
         settings["nyugtaszam"] = receipt_number
         settings["pdfSablon"] = pdf_template
-        payload_xml = {
-            **settings,  # see SzamlazzClient.get_basic_settings() for details
-        }
-        template = Template(templates.reverse_receipt)
-        output = template.render(payload_xml)
-        logger.debug(f"Rendered Template Output: {output}")
-
-        ok, err = xsd.validate(xml=output, xsd=xsd.reverse_receipt)
-        if not ok:
-            raise xsd.ValidationError(f"XML validation failed: " + err)
-
-        r = self._execute_request(action="action-szamla_agent_nyugta_storno", payload_xml=output)
+        r = self.request_maker(
+            action="action-szamla_agent_nyugta_storno",
+            template=templates.reverse_receipt,
+            template_data=settings,
+            xsd_xml=xsd.reverse_receipt,
+        )
         response = SzamlazzResponse(r, xml_namespace="{http://www.szamlazz.hu/xmlnyugtavalasz}")
         logger.info(f"success = {response.http_request_success}")
         logger.info(f"invoice_number = {response.invoice_number}")
         logger.info(f"buyer_account_url = {response.buyer_account_url}")
         return response
 
-    def query_receipt(self):
-        raise NotImplementedError
+    def query_receipt(self,
+                      receipt_number: str,
+                      pdf_template: str = "",
+                      ) -> SzamlazzResponse:
+        """
+        https://docs.szamlazz.hu/#querying-a-receipt
+        :param receipt_number: [string] <nyugtaszam>
+        :param pdf_template: <pdfSablon>
+        :return: SzamlazzResponse
+        """
+        settings = self.get_basic_settings()
+        settings["nyugtaszam"] = receipt_number
+        settings["pdfSablon"] = pdf_template
+        r = self.request_maker(
+            action="action-szamla_agent_nyugta_get",
+            template=templates.query_receipt,
+            template_data=settings,
+            xsd_xml=xsd.query_receipt,
+        )
+        response = SzamlazzResponse(r, xml_namespace="{http://www.szamlazz.hu/xmlnyugtavalasz}")
+        logger.info(f"success = {response.http_request_success}")
+        logger.info(f"invoice_number = {response.invoice_number}")
+        logger.info(f"buyer_account_url = {response.buyer_account_url}")
+        return response
 
     def send_receipt(self):
         raise NotImplementedError
@@ -332,31 +322,35 @@ class SzamlazzClient:
     def self_bill(self):
         raise NotImplementedError
 
-    def custom_request(self, action: str, template: str, template_data: dict, xsd_xml: str = "") -> Response:
+    def request_maker(self, action: str, template: str, template_data: dict, xsd_xml: str = "", payload_extra_attachments: dict = None) -> Response:
         """
         Custom, non-managed requests can be made against SzámlaAgent.
         :param action: eg.: action-xmlagentxmlfile
         :param template: a Jinja2 compatible template XML string
         :param template_data: (dict) Data injected into the Jinja2 compatible template XML template
         :param xsd_xml: [optional] The XSD Scheme for XSD scheme compliance check
+        :param payload_extra_attachments: (dict) Extra data injected into the Jinja2 compatible template XML template
         :return: requests.models.Response
 
         Note: Use SzamlazzClient.get_basic_settings() as a skeleton while creating your own template_data. See `get_basic_settings` to learn what fields are available automatically
         """
-        logger.info(f"custom_request / action: {action}")
-        logger.info(f"custom_request / template: {template}")
-        logger.info(f"custom_request / template_data: {template_data}")
-        logger.info(f"custom_request / xsd_xml: {xsd_xml}")
+        logger.info(f"request_maker / action: {action}")
+        logger.info(f"request_maker / template: {template}")
+        logger.info(f"request_maker / template_data: {template_data}")
+        logger.info(f"request_maker / xsd_xml: {xsd_xml}")
 
         template = Template(template)
         output = template.render(template_data)
-        logger.debug(f"custom_request / Rendered Template Output: {output}")
+        logger.debug(f"request_maker / Rendered Template Output: {output}")
 
         if xsd_xml != "":
             ok, err = xsd.validate(xml=output, xsd=xsd_xml)
             if not ok:
                 raise xsd.ValidationError(f"XML validation failed: " + err)
-        return self._execute_request(action=action, payload_xml=output)
+
+        payload = {action: output}
+        payload.update(payload_extra_attachments) if payload_extra_attachments else None
+        return requests.post(self.url, files=payload)
 
     def get_basic_settings(self) -> dict:
         """
@@ -379,9 +373,3 @@ class SzamlazzClient:
             "szamlaLetoltes": True,
             "valaszVerzio": self.response_version,
         }
-
-    def _execute_request(self, action: str, payload_xml: str, payload_extra_attachments: dict = None) -> Response:
-        payload = {action: payload_xml}
-        payload.update(payload_extra_attachments) if payload_extra_attachments else None
-        return requests.post(self.url, files=payload)
-

@@ -507,3 +507,32 @@ reverse_receipt = """<?xml version="1.0" encoding="UTF-8"?>
         </complexType>
     </element>
 </schema>"""
+
+
+# language=XML
+query_receipt = """<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.szamlazz.hu/xmlnyugtaget" xmlns:tns="http://www.szamlazz.hu/xmlnyugtaget" elementFormDefault="qualified">
+    <complexType name="beallitasokTipus">
+        <all>
+            <element name="felhasznalo" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="jelszo" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="szamlaagentkulcs" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="pdfLetoltes" type="boolean" maxOccurs="1" minOccurs="1"></element>
+        </all>
+    </complexType>
+    <complexType name="fejlecTipus">
+        <all>
+            <element name="nyugtaszam" type="string" maxOccurs="1" minOccurs="1"></element>
+            <element name="hivasAzonosito" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="pdfSablon" type="string" maxOccurs="1" minOccurs="0"></element>
+        </all>
+    </complexType>
+    <element name="xmlnyugtaget">
+        <complexType>
+            <all>
+                <element name="beallitasok" type="tns:beallitasokTipus" maxOccurs="1" minOccurs="1"></element>
+                <element name="fejlec" type="tns:fejlecTipus" maxOccurs="1" minOccurs="1"></element>
+            </all>
+        </complexType>
+    </element>
+</schema>"""

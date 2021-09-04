@@ -270,3 +270,21 @@ reverse_receipt = """<?xml version="1.0" encoding="UTF-8"?>
     {% endif %}
   </fejlec>
 </xmlnyugtast>"""
+
+
+# language=XML
+query_receipt = """<?xml version="1.0" encoding="UTF-8"?>
+<xmlnyugtaget xmlns="http://www.szamlazz.hu/xmlnyugtaget" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlnyugtaget http://www.szamlazz.hu/docs/xsds/nyugtaget/xmlnyugtaget.xsd">
+  <beallitasok>
+    <felhasznalo>{{ felhasznalo }}</felhasznalo>
+    <jelszo>{{ jelszo }}</jelszo>
+    <szamlaagentkulcs>{{ szamlaagentkulcs }}</szamlaagentkulcs>
+    <pdfLetoltes>{{ pdfLetoltes }}</pdfLetoltes>
+  </beallitasok>
+  <fejlec>
+    <nyugtaszam>{{ nyugtaszam }}</nyugtaszam>
+    {% if pdfSablon | length %}
+    <pdfSablon>{{ pdfSablon }}</pdfSablon>
+    {% endif %}
+  </fejlec>
+</xmlnyugtaget>"""
