@@ -8,6 +8,8 @@ It receives XML messages and depending on the received information it can do var
 
 Using **szamlazz.py**, you can interact with this interface in a convenient and Pythonic way.
 
+**szamlazz.py** provides multiple translated (Hungarian -> English) `NamedTuple` classes to help interaction with the API client. 
+
 # Integration
 Install the package from PyPI:
 ```shell
