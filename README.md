@@ -54,14 +54,14 @@ Currently, the following actions can be executed via **szamlazz.py**:
   * reverse invoices
   * register credit entries
   * query invoice pdf files
-  * ~~query invoice xml files~~
-  * ~~delete pro forma invoices~~
+  * query invoice xml files
+  * delete pro forma invoices
   * ~~create receipts~~
-  * ~~reverse receipts~~
-  * ~~query receipts~~
-  * ~~send receipts~~
-  * ~~query taxpayers~~
-  * ~~perform self billing~~
+  * reverse receipts
+  * query receipts
+  * send receipts
+  * query taxpayers
+  * ~~self billing~~
 
 **Note:** New actions are continuously implemented. Contributions are welcome too.
 

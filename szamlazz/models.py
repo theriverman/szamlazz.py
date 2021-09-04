@@ -8,7 +8,7 @@ from urllib.parse import unquote
 import xml.etree.ElementTree as ET
 
 
-__all__ = ["Header", "Merchant", "Buyer", "Item", "Disbursement", "SzamlazzResponse", "PdfDataMissingError", ]  # "WayBill"
+__all__ = ["Header", "Merchant", "Buyer", "Item", "Disbursement", "SzamlazzResponse", "PdfDataMissingError", "EmailDetails", ]  # "WayBill"
 logger = logging.getLogger(__name__)
 
 
@@ -91,6 +91,13 @@ class Disbursement(NamedTuple):
     title: str
     amount: float
     description: str = ""
+
+
+class EmailDetails(NamedTuple):
+    addresses: str
+    reply_to_address: str
+    subject: str
+    body_text: str = ""
 
 
 class SzamlazzResponse:

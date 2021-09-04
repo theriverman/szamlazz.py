@@ -536,3 +536,65 @@ query_receipt = """<?xml version="1.0" encoding="UTF-8"?>
         </complexType>
     </element>
 </schema>"""
+
+
+# language=XML
+send_receipt = """<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.szamlazz.hu/xmlnyugtasend" xmlns:tns="http://www.szamlazz.hu/xmlnyugtasend" elementFormDefault="qualified">
+    <complexType name="beallitasokTipus">
+        <sequence>
+            <element name="felhasznalo" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="jelszo" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="szamlaagentkulcs" type="string" maxOccurs="1" minOccurs="0"></element>
+        </sequence>
+    </complexType>
+    <complexType name="fejlecTipus">
+        <sequence>
+            <element name="nyugtaszam" type="string" maxOccurs="1" minOccurs="1"></element>
+        </sequence>
+    </complexType>
+    <complexType name="emailKuldes">
+        <sequence>
+            <element name="email" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="emailReplyto" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="emailTargy" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="emailSzoveg" type="string" maxOccurs="1" minOccurs="0"></element>
+        </sequence>
+    </complexType>
+    <element name="xmlnyugtasend">
+        <complexType>
+            <sequence>
+                <element name="beallitasok" type="tns:beallitasokTipus" maxOccurs="1" minOccurs="1"></element>
+                <element name="fejlec" type="tns:fejlecTipus" maxOccurs="1" minOccurs="1"></element>
+                <element name="emailKuldes" type="tns:emailKuldes" maxOccurs="1" minOccurs="0"></element>
+            </sequence>
+        </complexType>
+    </element>
+</schema>"""
+
+
+# language=XML
+tax_payer = """<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.szamlazz.hu/xmltaxpayer" xmlns:tns="http://www.szamlazz.hu/xmltaxpayer" elementFormDefault="qualified">
+    <complexType name="beallitasokTipus">
+        <sequence>
+            <element name="felhasznalo" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="jelszo" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="szamlaagentkulcs" type="string" maxOccurs="1" minOccurs="0"></element>
+        </sequence>
+    </complexType>
+    <simpleType name="torszszamTipus">
+        <restriction base="string">
+            <length value="8" />
+            <pattern value="[0-9]{8}" />
+        </restriction>
+    </simpleType>
+    <element name="xmltaxpayer">
+        <complexType>
+            <sequence>
+                <element name="beallitasok" type="tns:beallitasokTipus"maxOccurs="1" minOccurs="1"></element>
+                <element name="torzsszam" type="tns:torszszamTipus"maxOccurs="1" minOccurs="1"></element>
+            </sequence>
+        </complexType>
+    </element>
+</schema>"""

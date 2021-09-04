@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from typing import List, Tuple
 
 import requests
 from jinja2 import Template
@@ -7,7 +7,7 @@ from requests.models import Response
 
 from szamlazz import templates
 from szamlazz import xsd
-from szamlazz.models import Header, Merchant, Buyer, Item, Disbursement, SzamlazzResponse
+from szamlazz.models import Header, Merchant, Buyer, Item, Disbursement, SzamlazzResponse, EmailDetails
 
 __all__ = ["SzamlazzClient", ]
 logger = logging.getLogger(__name__)
@@ -313,11 +313,65 @@ class SzamlazzClient:
         logger.info(f"buyer_account_url = {response.buyer_account_url}")
         return response
 
-    def send_receipt(self):
-        raise NotImplementedError
+    def send_receipt(self,
+                     email_details: EmailDetails,
+                     send_again_previous_email: bool = False,
+                     ) -> SzamlazzResponse:
+        """
+        https://docs.szamlazz.hu/#sending-a-receipt
 
-    def query_taxpayers(self):
-        raise NotImplementedError
+        In case you would like to provide multiple e-mail addresses in the e-mail field of the XML file, they must be separated by “,” (comma).
+        Example:
+        email_details.addresses = "abc@domain.com,def@domain.com,ghi@domain.com"
+
+        :param email_details: [EmailDetails]
+        :param send_again_previous_email: if True, the previous e-mail will be sent
+        :return: SzamlazzResponse
+        """
+        settings = self.get_basic_settings()
+        payload = {
+            "email_details": email_details,
+            "sendAgainPreviousEmail": send_again_previous_email,
+            **settings,
+        }
+        r = self.request_maker(
+            action="action-szamla_agent_nyugta_send",
+            template=templates.send_receipt,
+            template_data=payload,
+            xsd_xml=xsd.send_receipt,
+        )
+        response = SzamlazzResponse(r, xml_namespace="{http://www.szamlazz.hu/xmlnyugtasendvalasz}")
+        logger.info(f"success = {response.http_request_success}")
+        logger.info(f"invoice_number = {response.invoice_number}")
+        logger.info(f"buyer_account_url = {response.buyer_account_url}")
+        return response
+
+    def query_taxpayer(self,
+                       vat_number: str
+                       ) -> Tuple[Response, str]:
+        """
+        This interface is used to query the validity of a VAT number. The data is from the Online Invoice Platform of NAV, the Hungarian National Tax and Customs Administration.
+
+        The response always matches the QueryTaxPayerResponse type of Online Invoice Platform of NAV, the Hungarian National Tax and Customs Administration.
+        xmlns="http://schemas.nav.gov.hu/OSA/2.0/api"
+        xmlns:ns2="http://schemas.nav.gov.hu/OSA/2.0/data"
+
+        https://docs.szamlazz.hu/#querying-taxpayers
+        :param vat_number: [str] VAT Number of the queried company
+        :return: Tuple[requests.models.Response, requests.models.Response.text]: (Response, returned XML string)
+        """
+        settings = self.get_basic_settings()
+        payload = {
+            "vat_number": vat_number,
+            **settings,
+        }
+        r = self.request_maker(
+            action="action-szamla_agent_taxpayer",
+            template=templates.tax_payer,
+            template_data=payload,
+            xsd_xml=xsd.tax_payer,
+        )
+        return r, r.text
 
     def self_bill(self):
         raise NotImplementedError

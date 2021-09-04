@@ -274,7 +274,9 @@ reverse_receipt = """<?xml version="1.0" encoding="UTF-8"?>
 
 # language=XML
 query_receipt = """<?xml version="1.0" encoding="UTF-8"?>
-<xmlnyugtaget xmlns="http://www.szamlazz.hu/xmlnyugtaget" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlnyugtaget http://www.szamlazz.hu/docs/xsds/nyugtaget/xmlnyugtaget.xsd">
+<xmlnyugtaget xmlns="http://www.szamlazz.hu/xmlnyugtaget"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.szamlazz.hu/xmlnyugtaget http://www.szamlazz.hu/docs/xsds/nyugtaget/xmlnyugtaget.xsd">
   <beallitasok>
     <felhasznalo>{{ felhasznalo }}</felhasznalo>
     <jelszo>{{ jelszo }}</jelszo>
@@ -288,3 +290,42 @@ query_receipt = """<?xml version="1.0" encoding="UTF-8"?>
     {% endif %}
   </fejlec>
 </xmlnyugtaget>"""
+
+
+# language=XML
+send_receipt = """<?xml version="1.0" encoding="UTF-8"?>
+<xmlnyugtasend xmlns="http://www.szamlazz.hu/xmlnyugtasend"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://www.szamlazz.hu/xmlnyugtasend http://www.szamlazz.hu/docs/xsds/nyugtasend/xmlnyugtasend.xsd">
+  <beallitasok>
+    <felhasznalo>{{ felhasznalo }}</felhasznalo>
+    <jelszo>{{ jelszo }}</jelszo>
+    <szamlaagentkulcs>{{ szamlaagentkulcs }}</szamlaagentkulcs>
+  </beallitasok>
+  <fejlec>
+    <nyugtaszam>{{ nyugtaszam }}</nyugtaszam>
+  </fejlec>
+  {% if sendAgainPreviousEmail %}
+  <!-- e-mail details, if not defined, the previous e-mail will be sent  -->
+  <emailKuldes>
+    <email>{{ email_details.addresses }}</email>
+    <emailReplyto>{{ email_details.reply_to_address }}</emailReplyto>
+    <emailTargy>{{ email_details.subject }}</emailTargy>
+    <emailSzoveg>{{ email_details.body_text }}</emailSzoveg>
+  </emailKuldes>
+  {% endif %}
+</xmlnyugtasend>"""
+
+
+# language=XML
+tax_payer = """<?xml version="1.0" encoding="UTF-8"?>
+<xmltaxpayer xmlns="http://www.szamlazz.hu/xmltaxpayer"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.szamlazz.hu/xmltaxpayer http://www.szamlazz.hu/docs/xsds/agent/xmltaxpayer.xsd">
+    <beallitasok>
+        <felhasznalo>{{ felhasznalo }}</felhasznalo>
+        <jelszo>{{ jelszo }}</jelszo>
+        <szamlaagentkulcs>{{ szamlaagentkulcs }}</szamlaagentkulcs>
+    </beallitasok>
+    <torzsszam>{{ vat_number }}</torzsszam>
+</xmltaxpayer>"""
