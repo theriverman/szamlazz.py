@@ -45,7 +45,6 @@ All actions (e.g.: `generate_invoice`, `reverse_invoice`, etc.) return a new `Sz
   * `.get_pdf_base64()`
   * `.get_pdf_bytes()`
   * `.write_pdf_to_disk()`
-  * `.print_details()`
   * `.print_errors()`
 
 For more details, see the contents of [`class SzamlazzResponse`](szamlazz/models.py).

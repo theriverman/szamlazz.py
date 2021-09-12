@@ -215,18 +215,6 @@ class SzamlazzResponse:
         with open(pdf_output_path, "wb+") as f:
             f.write(data)
 
-    def print_details(self):
-        if not self.has_errors:
-            print("action success:", self.http_request_success)
-            print("http_request_success:", self.http_request_success)
-            print("invoice_number:", self.invoice_number)
-            print("invoice_net_price:", self.invoice_net_price)
-            print("invoice_gross_price:", self.invoice_gross_price)
-            print("receivables:", self.receivables)
-            print("buyer_account_url:", self.buyer_account_url)
-        else:
-            self.print_errors()
-
     def print_errors(self) -> Tuple[str, str]:
         """
         Prints the returned error_code and error_message
