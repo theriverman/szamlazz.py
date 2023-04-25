@@ -449,13 +449,12 @@ payload = {
 
         Note: Use SzamlazzClient.get_basic_settings() as a skeleton while creating your own template_data. See `get_basic_settings` to learn what fields are available automatically
         """
-        logger.info(f"request_maker / action: {action}")
-        logger.info(f"request_maker / template: {template}")
-        logger.info(f"request_maker / template_data: {template_data}")
-        logger.info(f"request_maker / xsd_xml: {xsd_xml}")
-
-        template = Template(template)
-        output = template.render(template_data)
+        t = Template(template)
+        output = t.render(template_data)
+        logger.debug(f"request_maker / action: {action}")
+        logger.debug(f"request_maker / template: {template}")
+        logger.debug(f"request_maker / template_data: {template_data}")
+        logger.debug(f"request_maker / xsd_xml: {xsd_xml}")
         logger.debug(f"request_maker / Rendered Template Output: {output}")
 
         if xsd_xml != "":
