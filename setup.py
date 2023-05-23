@@ -21,7 +21,7 @@ setuptools.setup(
     },
     install_requires=[
         'Jinja2~=3.1.2',
-        'requests~=2.28.2',
+        'requests>=2.31.0',
         'lxml~=4.9.2',
     ],
     classifiers=[
