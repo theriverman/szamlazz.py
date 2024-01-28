@@ -31,10 +31,19 @@ class Header(NamedTuple):
     pro_forma_number_ref: str = ""  # <dijbekeroSzamlaszam></dijbekeroSzamlaszam>
     deposit_invoice: bool = False  # <elolegszamla>false</elolegszamla>
     invoice_after_deposit_invoice: bool = False  # <vegszamla>false</vegszamla>
+    down_payment_invoice_number: str = "" # <elolegSzamlaszam></elolegSzamlaszam>
     correction_invoice: bool = False  # <helyesbitoszamla>false</helyesbitoszamla>
     number_of_corrected_invoice: str = ""  # <helyesbitettSzamlaszam></helyesbitettSzamlaszam>
     proforma_invoice: bool = False  # <dijbekero>false</dijbekero>
+    # szallitolevel
+    # logoExtra
     invoice_prefix: str = ""  # <szamlaszamElotag></szamlaszamElotag>
+    # fizetendoKorrekcio
+    # fizetve
+    # arresAfa
+    # eusAfa
+    # szamlaSablon
+    # elonezetpdf
     invoice_number: str = ""  # <szamlaszam>E-TST-2011-1</szamlaszam>  // needed for reverse_invoice|storno only
     invoice_template: str = ""  # <!-- Codomain: 'SzlaMost' | 'SzlaAlap' | 'SzlaNoEnv' | 'Szla8cm' | 'SzlaTomb' | 'SzlaFuvarlevelesAlap' -->
 
@@ -46,23 +55,30 @@ class Merchant(NamedTuple):
     reply_email_address: str = ""  # <emailReplyto> </emailReplyto>
     email_subject: str = ""  # <emailTargy>Invoice notification</emailTargy>
     email_text: str = ""  # <emailSzoveg>mail text</emailSzoveg>
+    signatory_name: str = "" # <alairoNeve>Kovacs Peter</alairoNeve>
 
 
 class Buyer(NamedTuple):
     """<vevo>"""
     name: str = ""  # <nev>Kovacs Bt.</nev>
+    country: str = ""  # <orszag>Hungary</orszag>
     zip_code: str = ""  # <irsz>2030</irsz>
     city: str = ""  # <telepules>Érd</telepules>
     address: str = ""  # <cim>Tárnoki út 23.</cim>
     email: str = ""  # <email>buyer@example.com</email>
     send_email: bool = False  # <sendEmail>false</sendEmail>
+    tax_subject: int = "" # <adoalany>-1</adoalany> <!-- Possible values are 7:business is based outside of the European Union, 6:business is based in the Europen Union, 1: has a hungarian tax number, 0: we don't know, if the buyer has a tax number, -1: no tax number -->
     tax_number: str = ""  # <adoszam>12345678-1-42</adoszam>
-    tax_number_eu: str = ""  # <adoszamEU>HU55555555</adoszamEU>  // needed for reverse_invoice|storno only
+    group_id: str = "" # <csoportazonosito>?</csoportazonosito>
+    tax_number_eu: str = ""  # <adoszamEU>HU55555555</adoszamEU>
     delivery_name: str = ""  # <postazasiNev>Kovács Bt. mailing name</postazasiNev>
+    delivery_country: str = ""  # <postazasiOrszag>Hungary</postazasiOrszag>
     delivery_zip: str = ""  # <postazasiIrsz>2040</postazasiIrsz>
     delivery_city: str = ""  # <postazasiTelepules>Budaörs</postazasiTelepules>
     delivery_address: str = ""  # <postazasiCim>Szivárvány utca 8.</postazasiCim>
+    # vevoFokonyv TODO: to be implemented if needed
     identification: str = ""  # <azonosito>1234</azonosito>
+    signatory_name: str = "" # <alairoNeve>Kovacs Peter</alairoNeve>
     phone_number: str = ""  # <telefonszam>Tel:+3630-555-55-55, Fax:+3623-555-555</telefonszam>
     comment: str = ""  # <megjegyzes>Call extension 214 from the reception</megjegyzes>
 

@@ -30,6 +30,7 @@ generate_invoice: str = """<?xml version="1.0" encoding="UTF-8"?>
         <dijbekeroSzamlaszam>{{ header.pro_forma_number_ref }}</dijbekeroSzamlaszam>
         <elolegszamla>{{ header.deposit_invoice | lower }}</elolegszamla>
         <vegszamla>{{ header.invoice_after_deposit_invoice | lower }}</vegszamla>
+        <elolegSzamlaszam>{{ header.down_payment_invoice_number }}</elolegSzamlaszam>
         <helyesbitoszamla>{{ header.correction_invoice | lower }}</helyesbitoszamla>
         <helyesbitettSzamlaszam>{{ header.number_of_corrected_invoice }}</helyesbitettSzamlaszam>
         <dijbekero>{{ header.proforma_invoice | lower }}</dijbekero>
@@ -44,17 +45,23 @@ generate_invoice: str = """<?xml version="1.0" encoding="UTF-8"?>
     </elado>
     <vevo>
         <nev>{{ buyer.name }}</nev>
+        <orszag>{{ buyer.country }}</orszag>
         <irsz>{{ buyer.zip_code }}</irsz>
         <telepules>{{ buyer.city }}</telepules>
         <cim>{{ buyer.address }}</cim>
         <email>{{ buyer.email }}</email>
         <sendEmail>{{ buyer.send_email | lower }}</sendEmail>
+        <adoalany>{{ buyer.tax_subject }}</adoalany>
         <adoszam>{{ buyer.tax_number }}</adoszam>
+        <csoportazonosito>{{ buyer.group_id }}</csoportazonosito>
+        <adoszamEU>{{ buyer.tax_number_eu }}</adoszamEU>
         <postazasiNev>{{ buyer.delivery_name }}</postazasiNev>
+        <postazasiOrszag>{{ buyer.delivery_country }}</postazasiOrszag>
         <postazasiIrsz>{{ buyer.delivery_zip }}</postazasiIrsz>
         <postazasiTelepules>{{ buyer.delivery_city }}</postazasiTelepules>
         <postazasiCim>{{ buyer.delivery_address }}</postazasiCim>
         <azonosito>{{ buyer.identification }}</azonosito>
+        <alairoNeve>{{ buyer.signatory_name }}</alairoNeve>
         <telefonszam>{{ buyer.phone_number }}</telefonszam>
         <megjegyzes>{{ buyer.comment }}</megjegyzes>
     </vevo>
