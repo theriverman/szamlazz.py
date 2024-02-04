@@ -53,6 +53,7 @@ if __name__ == '__main__':
         city="Érd",
         address="Tárnoki út 23.",
         email="buyer@example.com",
+        tax_subject=0, # <!-- Possible values are 7:business is based outside of the European Union, 6:business is based in the Europen Union, 1: has a hungarian tax number, 0: we don't know, if the buyer has a tax number, -1: no tax number -->
         send_email=False,
         tax_number="12345678-1-42",
         delivery_name="Kovács Bt. mailing name",

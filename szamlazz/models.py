@@ -67,7 +67,7 @@ class Buyer(NamedTuple):
     address: str = ""  # <cim>Tárnoki út 23.</cim>
     email: str = ""  # <email>buyer@example.com</email>
     send_email: bool = False  # <sendEmail>false</sendEmail>
-    tax_subject: int = "" # <adoalany>-1</adoalany> <!-- Possible values are 7:business is based outside of the European Union, 6:business is based in the Europen Union, 1: has a hungarian tax number, 0: we don't know, if the buyer has a tax number, -1: no tax number -->
+    tax_subject: int = 0 # <adoalany>-1</adoalany> <!-- Possible values are 7:business is based outside of the European Union, 6:business is based in the Europen Union, 1: has a hungarian tax number, 0: we don't know, if the buyer has a tax number, -1: no tax number -->
     tax_number: str = ""  # <adoszam>12345678-1-42</adoszam>
     group_id: str = "" # <csoportazonosito>?</csoportazonosito>
     tax_number_eu: str = ""  # <adoszamEU>HU55555555</adoszamEU>

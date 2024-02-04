@@ -38,6 +38,7 @@ generate_invoice = """<?xml version="1.0" encoding="UTF-8"?>
             <element name="sendEmail" type="boolean" maxOccurs="1" minOccurs="0"></element>
             <element name="adoalany" type="int" maxOccurs="1" minOccurs="0"></element>            <!-- Possible values for the "type" field: 7:business is based outside of the European Union, 6:business is based in the Europen Union, 1: has a hungarian tax number, 0: we don't know, if the buyer has a tax number, -1: no tax number -->
             <element name="adoszam" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="csoportazonosito" type="string" maxOccurs="1" minOccurs="0"></element>
             <element name="adoszamEU" type="string" maxOccurs="1" minOccurs="0"></element>
             <element name="postazasiNev" type="string" maxOccurs="1" minOccurs="0"></element>
             <element name="postazasiOrszag" type="string" maxOccurs="1" minOccurs="0"></element>
@@ -86,7 +87,7 @@ generate_invoice = """<?xml version="1.0" encoding="UTF-8"?>
             <element name="aggregator" type="string" maxOccurs="1" minOccurs="0"></element>
             <element name="guardian" type="boolean" maxOccurs="1" minOccurs="0"></element>
             <element name="cikkazoninvoice" type="boolean" maxOccurs="1" minOccurs="0"></element>
-
+            <element name="szamlaKulsoAzon" type="string" maxOccurs="1" minOccurs="0"></element>
         </sequence>
     </complexType>
 
@@ -139,6 +140,7 @@ generate_invoice = """<?xml version="1.0" encoding="UTF-8"?>
             <element name="dijbekeroSzamlaszam" type="string" maxOccurs="1" minOccurs="0"></element> <!-- link to prepayment request -->
             <element name="elolegszamla" type="boolean" maxOccurs="1" minOccurs="0"></element>
             <element name="vegszamla" type="boolean" maxOccurs="1" minOccurs="0"></element>
+            <element name="elolegSzamlaszam" type="string" maxOccurs="1" minOccurs="0"></element>    <!-- The invoice number of the down payment invoice can be defined here if the final bill of the down payment invoice can't be identified with the order number. If both invoice number and order number is present, order number takes precedent. -->  
             <element name="helyesbitoszamla" type="boolean" maxOccurs="1" minOccurs="0"></element>
             <element name="helyesbitettSzamlaszam" type="string" maxOccurs="1" minOccurs="0"></element>
             <element name="dijbekero" type="boolean" maxOccurs="1" minOccurs="0"></element>
@@ -149,7 +151,7 @@ generate_invoice = """<?xml version="1.0" encoding="UTF-8"?>
             <element name="fizetve" type="boolean" maxOccurs="1" minOccurs="0"></element>
             <element name="arresAfa" type="boolean" maxOccurs="1" minOccurs="0"></element>
             <element name="eusAfa" type="boolean" maxOccurs="1" minOccurs="0"></element>            <!-- There is no hungarian VAT on the receipt. Data disclosure towards NTCAs Online Invoice System is not needed. -->
-            <element name="szamlaSablon" type="string" maxOccurs="1" minOccurs="0"></element>       <!-- Codomain: 'SzlaMost' | 'SzlaAlap' | 'SzlaNoEnv' | 'Szla8cm' | 'SzlaTomb' | 'szlafuvarlevelesalap'-->
+            <element name="szamlaSablon" type="string" maxOccurs="1" minOccurs="0"></element>       <!-- Codomain: 'SzlaMost' | 'SzlaAlap' | 'SzlaNoEnv' | 'Szla8cm' | 'SzlaTomb' | 'SzlaFuvarlevelesAlap'-->
             <element name="elonezetpdf" type="boolean" maxOccurs="1" minOccurs="0"></element>       <!-- warrant preview pdf (no warrant is created) --> 
         </sequence>
     </complexType>
@@ -256,8 +258,7 @@ generate_invoice = """<?xml version="1.0" encoding="UTF-8"?>
             </sequence>
         </complexType>
     </element>
-</schema>
-"""
+</schema>"""
 
 # language=XSD
 reverse_invoice = """<?xml version="1.0" encoding="UTF-8"?>
