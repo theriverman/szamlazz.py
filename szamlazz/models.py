@@ -147,8 +147,8 @@ class SzamlazzResponse:
         self.xml_namespace = xml_namespace
         self.__response = response
         self.__action_success: bool = False
-        content_type = response.headers.get("Content-Type")
-        if content_type == "application/octet-stream":
+        content_type = response.headers.get("Content-Type", "")
+        if "application/octet-stream" in content_type:
             # Parse XML and map into class members
             root = ET.fromstring(self.__response.text)
             self.__pdf: str = self.__get_tag_text(root, "pdf")
