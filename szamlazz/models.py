@@ -91,23 +91,13 @@ class Buyer(NamedTuple):
 
 
 class ItemLedger(NamedTuple):
-    # language=XML
-    """
-    <sequence>
-        <element name="gazdasagiEsem" type="string" maxOccurs="1" minOccurs="0"></element>
-        <element name="gazdasagiEsemAfa" type="string" maxOccurs="1" minOccurs="0"></element>
-        <element name="arbevetelFokonyviSzam" type="string" maxOccurs="1" minOccurs="0"></element>
-        <element name="afaFokonyviSzam" type="string" maxOccurs="1" minOccurs="0"></element>
-        <element name="elszDatumTol" type="date" maxOccurs="1" minOccurs="0"></element>
-        <element name="elszDatumIg" type="date" maxOccurs="1" minOccurs="0"></element>
-    </sequence>
-    """
-    economic_event: str = ""  # <gazdasagiesemeny></gazdasagiesemeny>
-    economic_event_tax: str = ""  # <gazdasagiesemenyafa></gazdasagiesemenyafa>
-    sales_ledger_number: str = ""
-    vat_ledger_number: str = ""
-    settlement_date_from: str = ""
-    settlement_date_to: str = ""
+    """<tetelFokonyv>"""
+    economic_event: str = ""  # <gazdasagiEsemeny></gazdasagiEsemeny>
+    economic_event_tax: str = ""  # <gazdasagiEsemenyAfa></gazdasagiEsemenyAfa>
+    sales_ledger_number: str = "" # <arbevetelFokonyviSzam></arbevetelFokonyviSzam>
+    vat_ledger_number: str = "" # <afaFokonyviSzam></afaFokonyviSzam>
+    settlement_date_from: str = "" # <elszamolasDatumTol></elszamolasDatumTol>
+    settlement_date_to: str = "" # <elszamolasDatumTol></elszamolasDatumTol>
 
 
 class Item(NamedTuple):
