@@ -8,7 +8,7 @@ from urllib.parse import unquote
 import xml.etree.ElementTree as ET
 
 
-__all__ = ["Header", "Merchant", "Buyer", "Item", "Disbursement", "SzamlazzResponse", "PdfDataMissingError", "EmailDetails", ]  # "WayBill"
+__all__ = ["Header", "Merchant", "BuyerLedger", "Buyer", "ItemLedger", "Item", "Disbursement", "SzamlazzResponse", "PdfDataMissingError", "EmailDetails", ]  # "WayBill"
 logger = logging.getLogger(__name__)
 
 
