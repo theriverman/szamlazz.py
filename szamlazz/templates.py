@@ -60,6 +60,24 @@ generate_invoice: str = """<?xml version="1.0" encoding="UTF-8"?>
         <postazasiIrsz>{{ buyer.delivery_zip }}</postazasiIrsz>
         <postazasiTelepules>{{ buyer.delivery_city }}</postazasiTelepules>
         <postazasiCim>{{ buyer.delivery_address }}</postazasiCim>
+        {% if buyer.buyer_ledger %}
+            {% set ledger_fields = {
+                "konyvelesDatum": buyer.buyer_ledger.accounting_date,
+                "vevoAzonosito": buyer.buyer_ledger.buyer_identifier,
+                "vevoFokonyviSzam": buyer.buyer_ledger.buyer_ledger_number,
+                "folyamatosTelj": buyer.buyer_ledger.continuous_performance | lower,
+                "elszDatumTol": buyer.buyer_ledger.settlement_date_from,
+                "elszDatumIg": buyer.buyer_ledger.settlement_date_to
+              } %}
+
+            {% if ledger_fields.values() | select("string") | list %}
+                <vevoFokonyv>
+                    {% for key, value in ledger_fields.items() if value %}
+                        <{{ key }}>{{ value }}</{{ key }}>
+                    {% endfor %}
+                </vevoFokonyv>
+              {% endif %}
+        {% endif %}
         <azonosito>{{ buyer.identification }}</azonosito>
         <alairoNeve>{{ buyer.signatory_name }}</alairoNeve>
         <telefonszam>{{ buyer.phone_number }}</telefonszam>
@@ -81,6 +99,24 @@ generate_invoice: str = """<?xml version="1.0" encoding="UTF-8"?>
             <afaErtek>{{ item.vat_amount }}</afaErtek>
             <bruttoErtek>{{ item.gross_amount }}</bruttoErtek>
             <megjegyzes>{{ item.comment_for_item }}</megjegyzes>
+            {% if item.item_ledger %}
+              {% set ledger_fields = {
+                "gazdasagiEsem": item.item_ledger.economic_event,
+                "gazdasagiEsemAfa": item.item_ledger.economic_event_tax,
+                "arbevetelFokonyviSzam": item.item_ledger.sales_ledger_number,
+                "afaFokonyviSzam": item.item_ledger.vat_ledger_number,
+                "elszDatumTol": item.item_ledger.settlement_date_from,
+                "elszDatumIg": item.item_ledger.settlement_date_to
+              } %}
+
+              {% if ledger_fields.values() | select("string") | list %}
+                <tetelFokonyv>
+                    {% for key, value in ledger_fields.items() if value %}
+                        <{{ key }}>{{ value }}</{{ key }}>
+                    {% endfor %}
+                </tetelFokonyv>
+              {% endif %}
+            {% endif %}
         </tetel>
     {% endfor -%}
     </tetelek>
