@@ -99,24 +99,18 @@ generate_invoice: str = """<?xml version="1.0" encoding="UTF-8"?>
             <afaErtek>{{ item.vat_amount }}</afaErtek>
             <bruttoErtek>{{ item.gross_amount }}</bruttoErtek>
             <megjegyzes>{{ item.comment_for_item }}</megjegyzes>
-            {% if item.item_ledger %}
-              {% set ledger_fields = {
-                "gazdasagiEsem": item.item_ledger.economic_event,
-                "gazdasagiEsemAfa": item.item_ledger.economic_event_tax,
-                "arbevetelFokonyviSzam": item.item_ledger.sales_ledger_number,
-                "afaFokonyviSzam": item.item_ledger.vat_ledger_number,
-                "elszDatumTol": item.item_ledger.settlement_date_from,
-                "elszDatumIg": item.item_ledger.settlement_date_to
-              } %}
-
-              {% if ledger_fields.values() | select("string") | list %}
-                <tetelFokonyv>
-                    {% for key, value in ledger_fields.items() if value %}
-                        <{{ key }}>{{ value }}</{{ key }}>
-                    {% endfor %}
-                </tetelFokonyv>
+            <tetelFokonyv>
+              <gazdasagiEsem>{{ item.item_ledger.economic_event }}</gazdasagiEsem>
+              <gazdasagiEsemAfa>{{ item.item_ledger.economic_event_tax }}</gazdasagiEsemAfa>
+              <arbevetelFokonyviSzam>{{ item.item_ledger.sales_ledger_number }}</arbevetelFokonyviSzam>
+              <afaFokonyviSzam>{{ item.item_ledger.vat_ledger_number }}</afaFokonyviSzam>
+              {% if item.item_ledger.settlement_date_from %}
+                <elszDatumTol>{{ item.item_ledger.settlement_date_from }}</elszDatumTol>
               {% endif %}
-            {% endif %}
+              {% if item.item_ledger.settlement_date_to %}
+                <elszDatumIg>{{ item.item_ledger.settlement_date_to }}</elszDatumIg>
+              {% endif %}
+            </tetelFokonyv>
         </tetel>
     {% endfor -%}
     </tetelek>
