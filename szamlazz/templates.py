@@ -60,24 +60,22 @@ generate_invoice: str = """<?xml version="1.0" encoding="UTF-8"?>
         <postazasiIrsz>{{ buyer.delivery_zip }}</postazasiIrsz>
         <postazasiTelepules>{{ buyer.delivery_city }}</postazasiTelepules>
         <postazasiCim>{{ buyer.delivery_address }}</postazasiCim>
-        {% if buyer.buyer_ledger %}
-            {% set ledger_fields = {
-                "konyvelesDatum": buyer.buyer_ledger.accounting_date,
-                "vevoAzonosito": buyer.buyer_ledger.buyer_identifier,
-                "vevoFokonyviSzam": buyer.buyer_ledger.buyer_ledger_number,
-                "folyamatosTelj": buyer.buyer_ledger.continuous_performance | lower,
-                "elszDatumTol": buyer.buyer_ledger.settlement_date_from,
-                "elszDatumIg": buyer.buyer_ledger.settlement_date_to
-              } %}
-
-            {% if ledger_fields.values() | select("string") | list %}
-                <vevoFokonyv>
-                    {% for key, value in ledger_fields.items() if value %}
-                        <{{ key }}>{{ value }}</{{ key }}>
-                    {% endfor %}
-                </vevoFokonyv>
-              {% endif %}
-        {% endif %}
+        <vevoFokonyv>
+          {% if buyer.buyer_ledger.accounting_date %}
+            <konyvelesDatum>{{ buyer.buyer_ledger.accounting_date }}</konyvelesDatum>
+          {% endif %}
+          <vevoAzonosito>{{ buyer.buyer_ledger.buyer_identifier }}</vevoAzonosito>
+          <vevoFokonyviSzam>{{ buyer.buyer_ledger.buyer_ledger_number }}</vevoFokonyviSzam>
+          {% if buyer.buyer_ledger.continuous_performance %}
+            <folyamatosTelj>{{ buyer.buyer_ledger.continuous_performance | lower }}</folyamatosTelj>
+          {% endif %}
+          {% if buyer.buyer_ledger.settlement_date_from %}
+            <elszDatumTol>{{ buyer.buyer_ledger.settlement_date_from }}</elszDatumTol>
+          {% endif %}
+          {% if buyer.buyer_ledger.settlement_date_to %}
+            <elszDatumIg>{{ buyer.buyer_ledger.settlement_date_to }}</elszDatumIg>
+          {% endif %}
+        </vevoFokonyv>
         <azonosito>{{ buyer.identification }}</azonosito>
         <alairoNeve>{{ buyer.signatory_name }}</alairoNeve>
         <telefonszam>{{ buyer.phone_number }}</telefonszam>
