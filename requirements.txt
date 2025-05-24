@@ -1,7 +1,7 @@
 certifi==2024.7.4
 charset-normalizer==3.3.2
 idna==3.7
-Jinja2==3.1.5
+Jinja2==3.1.6
 lxml==4.9.4
 MarkupSafe==2.1.4
 requests==2.32.0
