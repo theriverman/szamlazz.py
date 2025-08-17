@@ -60,6 +60,22 @@ generate_invoice: str = """<?xml version="1.0" encoding="UTF-8"?>
         <postazasiIrsz>{{ buyer.delivery_zip }}</postazasiIrsz>
         <postazasiTelepules>{{ buyer.delivery_city }}</postazasiTelepules>
         <postazasiCim>{{ buyer.delivery_address }}</postazasiCim>
+        <vevoFokonyv>
+          {% if buyer.buyer_ledger.accounting_date %}
+            <konyvelesDatum>{{ buyer.buyer_ledger.accounting_date }}</konyvelesDatum>
+          {% endif %}
+          <vevoAzonosito>{{ buyer.buyer_ledger.buyer_identifier }}</vevoAzonosito>
+          <vevoFokonyviSzam>{{ buyer.buyer_ledger.buyer_ledger_number }}</vevoFokonyviSzam>
+          {% if buyer.buyer_ledger.continuous_performance %}
+            <folyamatosTelj>{{ buyer.buyer_ledger.continuous_performance | lower }}</folyamatosTelj>
+          {% endif %}
+          {% if buyer.buyer_ledger.settlement_date_from %}
+            <elszDatumTol>{{ buyer.buyer_ledger.settlement_date_from }}</elszDatumTol>
+          {% endif %}
+          {% if buyer.buyer_ledger.settlement_date_to %}
+            <elszDatumIg>{{ buyer.buyer_ledger.settlement_date_to }}</elszDatumIg>
+          {% endif %}
+        </vevoFokonyv>
         <azonosito>{{ buyer.identification }}</azonosito>
         <alairoNeve>{{ buyer.signatory_name }}</alairoNeve>
         <telefonszam>{{ buyer.phone_number }}</telefonszam>
@@ -81,6 +97,18 @@ generate_invoice: str = """<?xml version="1.0" encoding="UTF-8"?>
             <afaErtek>{{ item.vat_amount }}</afaErtek>
             <bruttoErtek>{{ item.gross_amount }}</bruttoErtek>
             <megjegyzes>{{ item.comment_for_item }}</megjegyzes>
+            <tetelFokonyv>
+              <gazdasagiEsem>{{ item.item_ledger.economic_event }}</gazdasagiEsem>
+              <gazdasagiEsemAfa>{{ item.item_ledger.economic_event_tax }}</gazdasagiEsemAfa>
+              <arbevetelFokonyviSzam>{{ item.item_ledger.sales_ledger_number }}</arbevetelFokonyviSzam>
+              <afaFokonyviSzam>{{ item.item_ledger.vat_ledger_number }}</afaFokonyviSzam>
+              {% if item.item_ledger.settlement_date_from %}
+                <elszDatumTol>{{ item.item_ledger.settlement_date_from }}</elszDatumTol>
+              {% endif %}
+              {% if item.item_ledger.settlement_date_to %}
+                <elszDatumIg>{{ item.item_ledger.settlement_date_to }}</elszDatumIg>
+              {% endif %}
+            </tetelFokonyv>
         </tetel>
     {% endfor -%}
     </tetelek>

@@ -8,7 +8,7 @@ from urllib.parse import unquote
 import xml.etree.ElementTree as ET
 
 
-__all__ = ["Header", "Merchant", "Buyer", "Item", "Disbursement", "SzamlazzResponse", "PdfDataMissingError", "EmailDetails", ]  # "WayBill"
+__all__ = ["Header", "Merchant", "BuyerLedger", "Buyer", "ItemLedger", "Item", "Disbursement", "SzamlazzResponse", "PdfDataMissingError", "EmailDetails", ]  # "WayBill"
 logger = logging.getLogger(__name__)
 
 
@@ -58,6 +58,16 @@ class Merchant(NamedTuple):
     signatory_name: str = "" # <alairoNeve>Kovacs Peter</alairoNeve>
 
 
+class BuyerLedger(NamedTuple):
+    """<vevoFokonyv>"""
+    accounting_date: str = ""  # <konyvelesDatum></konyvelesDatum>
+    buyer_identifier: str = ""  # <vevoAzonosito></vevoAzonosito>
+    buyer_ledger_number: str = "" # <vevoFokonyviSzam></vevoFokonyviSzam>
+    continuous_performance: bool = False # <folyamatosTeljesites></folyamatosTeljesites>
+    settlement_date_from: str = "" # <elszamolasDatumTol></elszamolasDatumTol>
+    settlement_date_to: str = "" # <elszamolasDatumIg></elszamolasDatumIg>
+
+
 class Buyer(NamedTuple):
     """<vevo>"""
     name: str = ""  # <nev>Kovacs Bt.</nev>
@@ -76,7 +86,7 @@ class Buyer(NamedTuple):
     delivery_zip: str = ""  # <postazasiIrsz>2040</postazasiIrsz>
     delivery_city: str = ""  # <postazasiTelepules>Budaörs</postazasiTelepules>
     delivery_address: str = ""  # <postazasiCim>Szivárvány utca 8.</postazasiCim>
-    # vevoFokonyv TODO: to be implemented if needed
+    buyer_ledger: BuyerLedger = ""  # <element name="vevoFokonyv" type="tns:vevoFokonyvTipus" maxOccurs="1" minOccurs="0"></element>
     identification: str = ""  # <azonosito>1234</azonosito>
     signatory_name: str = "" # <alairoNeve>Kovacs Peter</alairoNeve>
     phone_number: str = ""  # <telefonszam>Tel:+3630-555-55-55, Fax:+3623-555-555</telefonszam>
@@ -91,23 +101,13 @@ class Buyer(NamedTuple):
 
 
 class ItemLedger(NamedTuple):
-    # language=XML
-    """
-    <sequence>
-        <element name="gazdasagiEsem" type="string" maxOccurs="1" minOccurs="0"></element>
-        <element name="gazdasagiEsemAfa" type="string" maxOccurs="1" minOccurs="0"></element>
-        <element name="arbevetelFokonyviSzam" type="string" maxOccurs="1" minOccurs="0"></element>
-        <element name="afaFokonyviSzam" type="string" maxOccurs="1" minOccurs="0"></element>
-        <element name="elszDatumTol" type="date" maxOccurs="1" minOccurs="0"></element>
-        <element name="elszDatumIg" type="date" maxOccurs="1" minOccurs="0"></element>
-    </sequence>
-    """
-    economic_event: str = ""  # <gazdasagiesemeny></gazdasagiesemeny>
-    economic_event_tax: str = ""  # <gazdasagiesemenyafa></gazdasagiesemenyafa>
-    sales_ledger_number: str = ""
-    vat_ledger_number: str = ""
-    settlement_date_from: str = ""
-    settlement_date_to: str = ""
+    """<tetelFokonyv>"""
+    economic_event: str = ""  # <gazdasagiEsemeny></gazdasagiEsemeny>
+    economic_event_tax: str = ""  # <gazdasagiEsemenyAfa></gazdasagiEsemenyAfa>
+    sales_ledger_number: str = "" # <arbevetelFokonyviSzam></arbevetelFokonyviSzam>
+    vat_ledger_number: str = "" # <afaFokonyviSzam></afaFokonyviSzam>
+    settlement_date_from: str = "" # <elszamolasDatumTol></elszamolasDatumTol>
+    settlement_date_to: str = "" # <elszamolasDatumTol></elszamolasDatumTol>
 
 
 class Item(NamedTuple):
