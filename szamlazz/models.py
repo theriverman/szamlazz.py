@@ -11,7 +11,7 @@ import xml.etree.ElementTree as ET
 
 
 __all__ = ["Header", "Merchant", "BuyerLedger", "Buyer", "ItemLedger", "Item", "Disbursement", "SzamlazzResponse",
-           "PdfDataMissingError", "EmailDetails", "QueryTaxpayerResponse", "QueryTaxpayerError", ]  # "WayBill"
+           "PdfDataMissingError", "EmailDetails", "QueryTaxpayerResponse", ]  # "WayBill"
 logger = logging.getLogger(__name__)
 
 
