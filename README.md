@@ -49,6 +49,19 @@ All actions (e.g.: `generate_invoice`, `reverse_invoice`, etc.) return a new `Sz
 
 For more details, see the contents of [`class SzamlazzResponse`](szamlazz/models.py).
 
+Action `query_taxpayer` returns a new `QueryTaxpayerResponse` instance which has the following parameters:
+  * `.has_errors`
+  * `.ok`
+  * `.response`
+  * `.raw_xml`
+  * `.to_dict`
+
+`QueryTaxpayerResponse` has a single callable function:
+  * `.print_errors() -> Tuple[str, str]`
+
+
+For more details, see the contents of [`class QueryTaxpayerResponse`](szamlazz/models.py).
+
 ## Implementation Status
 Currently, the following actions can be executed via **szamlazz.py**:
   * create invoices
