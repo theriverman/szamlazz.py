@@ -1,5 +1,7 @@
+import json
 import base64
 import logging
+import xmltodict
 from pathlib import Path
 from requests.models import Response
 from typing import NamedTuple, Tuple
@@ -8,7 +10,8 @@ from urllib.parse import unquote
 import xml.etree.ElementTree as ET
 
 
-__all__ = ["Header", "Merchant", "BuyerLedger", "Buyer", "ItemLedger", "Item", "Disbursement", "SzamlazzResponse", "PdfDataMissingError", "EmailDetails", ]  # "WayBill"
+__all__ = ["Header", "Merchant", "BuyerLedger", "Buyer", "ItemLedger", "Item", "Disbursement", "SzamlazzResponse",
+           "PdfDataMissingError", "EmailDetails", "QueryTaxpayerResponse", "QueryTaxpayerError", ]  # "WayBill"
 logger = logging.getLogger(__name__)
 
 
@@ -244,3 +247,65 @@ class SzamlazzResponse:
     def __get_tag_text(self, root: ET.Element, tag_name):
         tag = root.find(f"{self.xml_namespace}{tag_name}")
         return tag.text if tag is not None else None
+
+
+class QueryTaxpayerResponse:
+    def __init__(self, response: Response):
+        self.__response = response
+
+        # Parse XML
+        self.__parsed_xml = xmltodict.parse(self.__response.text, encoding="utf-8", process_namespaces=False)
+        logger.debug(json.dumps(self.__parsed_xml, indent=2, ensure_ascii=False))
+
+        # Declare error-related fields
+        self.__func_code: Optional[str] = self.__parsed_xml["ns2:QueryTaxpayerResponse"]["result"]["funcCode"]
+        self.__error_code: Optional[str] = None
+        self.__error_message: Optional[str] = None
+        self.__has_errors: bool = False
+
+        # Error checking
+        if self.__func_code != "OK":
+            self.__has_errors = True
+            self.__error_code: Optional[str] = self.__parsed_xml["ns2:QueryTaxpayerResponse"]["result"]["errorCode"]
+            self.__error_message: Optional[str] = self.__parsed_xml["ns2:QueryTaxpayerResponse"]["result"]["message"]
+
+
+    @property
+    def has_errors(self):
+        return self.__has_errors
+
+    @property
+    def ok(self):
+        """
+        Shortcut to the original response's attribute with the same name
+        """
+        return self.__response.ok
+
+    @property
+    def response(self) -> Response:
+        """
+        Original HTTP Response object returned by the requests package
+        :return: requests.models.Response
+        """
+        return self.__response
+
+    @property
+    def raw_xml(self) -> str:
+        """
+        Shortcut to the original response's text attribute
+        """
+        return self.__response.text
+
+    @property
+    def to_dict(self):
+        return self.__parsed_xml
+
+    def print_errors(self) -> Tuple[str, str]:
+        """
+        Prints the returned error_code and error_message
+        :return: Tuple[error_code, error_message]
+        """
+        if self.has_errors:
+            logging.error("QueryTaxpayerResponse error: funcCode=%s errorCode=%s message=%s",
+                          self.__func_code, self.__error_code, self.__error_message)
+        return self.__error_code, self.__error_message

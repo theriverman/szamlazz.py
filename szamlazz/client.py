@@ -7,7 +7,8 @@ from requests.models import Response
 
 from szamlazz import templates
 from szamlazz import xsd
-from szamlazz.models import Header, Merchant, Buyer, Item, Disbursement, SzamlazzResponse, EmailDetails
+from szamlazz.models import Header, Merchant, Buyer, Item, Disbursement, SzamlazzResponse, EmailDetails, QueryTaxpayerResponse
+
 
 __all__ = ["SzamlazzClient", ]
 logger = logging.getLogger(__name__)
@@ -407,9 +408,7 @@ payload = {
         logger.info(f"buyer_account_url = {response.buyer_account_url}")
         return response
 
-    def query_taxpayer(self,
-                       vat_number: str
-                       ) -> Tuple[Response, str]:
+    def query_taxpayer(self, vat_number: str):
         """
         This interface is used to query the validity of a VAT number. The data is from the Online Invoice Platform of NAV, the Hungarian National Tax and Customs Administration.
 
@@ -418,7 +417,7 @@ payload = {
         xmlns:ns2="http://schemas.nav.gov.hu/OSA/2.0/data"
 
         https://docs.szamlazz.hu/#querying-taxpayers
-        :param vat_number: [str] VAT Number of the queried company
+        :param vat_number: [str] VAT Number of the queried company. [0-9]{8} (e.g.: 13421739 that is 13421739-2-41 without VAT and Country codes)
         :return: Tuple[requests.models.Response, requests.models.Response.text]: (Response, returned XML string)
         """
         settings = self.get_basic_settings()
@@ -432,7 +431,7 @@ payload = {
             template_data=payload,
             xsd_xml=xsd.tax_payer,
         )
-        return r, r.text
+        return QueryTaxpayerResponse(r)
 
     def self_bill(self):
         raise NotImplementedError
@@ -440,7 +439,7 @@ payload = {
     def request_maker(self, action: str, template: str, template_data: dict, xsd_xml: str = "", payload_extra_attachments: dict = None) -> Response:
         """
         Custom, non-managed requests can be made against SzámlaAgent.
-        :param action: eg.: action-xmlagentxmlfile
+        :param action: e.g.: action-xmlagentxmlfile
         :param template: a Jinja2 compatible template XML string
         :param template_data: (dict) Data injected into the Jinja2 compatible template XML template
         :param xsd_xml: [optional] The XSD Scheme for XSD scheme compliance check

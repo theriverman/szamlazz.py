@@ -584,7 +584,7 @@ tax_payer = """<?xml version="1.0" encoding="UTF-8"?>
             <element name="szamlaagentkulcs" type="string" maxOccurs="1" minOccurs="0"></element>
         </sequence>
     </complexType>
-    <simpleType name="torszszamTipus">
+    <simpleType name="torzsszamTipus">
         <restriction base="string">
             <length value="8" />
             <pattern value="[0-9]{8}" />
@@ -593,8 +593,8 @@ tax_payer = """<?xml version="1.0" encoding="UTF-8"?>
     <element name="xmltaxpayer">
         <complexType>
             <sequence>
-                <element name="beallitasok" type="tns:beallitasokTipus"maxOccurs="1" minOccurs="1"></element>
-                <element name="torzsszam" type="tns:torszszamTipus"maxOccurs="1" minOccurs="1"></element>
+                <element name="beallitasok" type="tns:beallitasokTipus" maxOccurs="1" minOccurs="1"></element>
+                <element name="torzsszam" type="tns:torzsszamTipus" maxOccurs="1" minOccurs="1"></element>
             </sequence>
         </complexType>
     </element>
